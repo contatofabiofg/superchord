@@ -1,35 +1,39 @@
-# superchord
+## Superchord Vue.js
 
-This template should help get you started developing with Vue 3 in Vite.
+Hello! In this repo am I registring the code from this music app. Musicians haven't so much tima in rehearsal to write chord, and the papers allways get lost. So, whith this app, they can write this chords and print a pdf, share in whatsapp and gain time. Made with Vite, Vue.js and Firebase to host the data.
 
-## Recommended IDE Setup
+## 🔨 Funcionalities
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+-
+-
 
-## Customize configuration
+## ✔️ Technologies
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- `HTML`
+- `CSS`
+- `Javascript`
+  - `Variables and operators`
+  - `Functions`
+  - `if-Else, Switch and For`
+  - ` Array Methods`
+- `Vue.js 3 - script setup`
+  - `Single File Components`
+  - `v-for`
+  - `v-bind`
+  - `v-if`
+- `Tailwind`
+- `Vite`
 
-## Project Setup
+## 📁 Acessing the project
 
-```sh
-npm install
-```
+https://superchord.vercel.app/
 
-### Compile and Hot-Reload for Development
+## 🛠️ To open and run the project
 
-```sh
-npm run dev
-```
+- Clone this repository
+- To install: npm install
+- To run: npm run dev
 
-### Compile and Minify for Production
+## 📚 More informations
 
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+Make contact ! Send me an email e tell me what do you think: contatofabiofg@hotmail.com

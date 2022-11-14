@@ -1,13 +1,32 @@
 <script setup>
 import { ref } from 'vue'
+import { jsPDF } from 'jspdf'
+
+function print() {
+  let doc = new jsPDF()
+  let elementHTML = document.querySelector('#imprimir')
+
+  doc.html(elementHTML, {
+    callback: function (doc) {
+      // Save the PDF
+      doc.save('sample-document.pdf')
+    },
+    x: 15,
+    y: 15,
+    width: 170, //target width in the PDF document
+    windowWidth: 650, //window width in CSS pixels
+  })
+}
 
 const objetoCifra = ref({
   tom: 'C',
-  cifra: [[]],
+  cifra: [],
 })
 const cifra = objetoCifra.value.cifra
 const chordToDrop = ref('')
 const chordToErase = ref(null)
+const musicName = ref('')
+const submenu = ref(false)
 
 function dragAddBackground(e) {
   e.currentTarget.classList.add('hover')
@@ -17,6 +36,10 @@ function dragRemoveBackground(e) {
 }
 
 function addChord(gradevalue, variationValue) {
+  if (cifra.length == 0) {
+    cifra.push([])
+  }
+
   if (cifra[cifra.length - 1].length < 6) {
     cifra[cifra.length - 1].push({
       grade: gradevalue,
@@ -51,6 +74,23 @@ function addChordBydrop(line, position, e) {
 
 function eraseChordByDrop() {
   cifra[chordToErase.value.indexLinha].splice(chordToErase.value.indexAcorde, 1)
+}
+
+function reset() {
+  if (cifra.length > 0) {
+    if (window.confirm('Quer apagar toda esta cifra?')) {
+      cifra[0].forEach(() => cifra.pop())
+    }
+  }
+}
+
+function backspace() {
+  if (cifra[cifra.length - 1].length - 1 > 0) {
+    cifra[cifra.length - 1].pop()
+  } else {
+    console.log('apagou')
+    cifra.pop()
+  }
 }
 
 function mutateChord(line, position) {
@@ -113,6 +153,14 @@ const intervals = ref([
   { grade: 'VII', variation: 'º' },
 ])
 
+const dissonants = ref([
+  { grade: 'Ia', variation: null },
+  { grade: 'IIIm', variation: null },
+  { grade: 'IVa', variation: null },
+  { grade: 'Va', variation: null },
+  { grade: 'VIIm', variation: null },
+])
+
 function listaDeAcordes() {
   let obj
   switch (objetoCifra.value.tom) {
@@ -125,6 +173,11 @@ function listaDeAcordes() {
         V: 'D',
         VI: 'E',
         VII: 'F#',
+        Ia: 'G#',
+        IIIm: 'A#',
+        IVa: 'C#',
+        Va: 'D#',
+        VIIm: 'F',
       }
       break
     case 'A':
@@ -136,6 +189,11 @@ function listaDeAcordes() {
         V: 'E',
         VI: 'F#',
         VII: 'G#',
+        Ia: 'A#',
+        IIIm: 'C',
+        IVa: 'D#',
+        Va: 'F',
+        VIIm: 'G',
       }
       break
     case 'B':
@@ -147,6 +205,11 @@ function listaDeAcordes() {
         V: 'F#',
         VI: 'G#',
         VII: 'A#',
+        Ia: 'C',
+        IIIm: 'D',
+        IVa: 'F',
+        Va: 'G',
+        VIIm: 'A',
       }
       break
     case 'C':
@@ -158,6 +221,11 @@ function listaDeAcordes() {
         V: 'G',
         VI: 'A',
         VII: 'B',
+        Ia: 'C#',
+        IIIm: 'D#',
+        IVa: 'F#',
+        Va: 'G#',
+        VIIm: 'A#',
       }
       break
     case 'D':
@@ -169,6 +237,11 @@ function listaDeAcordes() {
         V: 'A',
         VI: 'B',
         VII: 'C#',
+        Ia: 'D#',
+        IIIm: 'F',
+        IVa: 'G#',
+        Va: 'A#',
+        VIIm: 'C',
       }
       break
     case 'E':
@@ -180,6 +253,11 @@ function listaDeAcordes() {
         V: 'B',
         VI: 'C#',
         VII: 'D#',
+        Ia: 'F',
+        IIIm: 'G',
+        IVa: 'A#',
+        Va: 'C',
+        VIIm: 'D',
       }
       break
     case 'F':
@@ -191,6 +269,11 @@ function listaDeAcordes() {
         V: 'C',
         VI: 'D',
         VII: 'Eº',
+        Ia: 'F#',
+        IIIm: 'G',
+        IVa: 'B',
+        Va: 'C#',
+        VIIm: 'D#',
       }
       break
   }
@@ -199,11 +282,19 @@ function listaDeAcordes() {
 </script>
 
 <template>
-  <div class="mt-5 w-full flex justify-center">
-    <div class="flex text-xl h-fit w-[70vw] lg:w-auto flex-wrap">
+  <!--TONE PICKER-->
+  <div
+    class="w-full flex-col justify-center py-3 fixed bottom-0 bg-white shadow-[0_25px_60px_-15px_rgba(0,0,0,1)]"
+  >
+    <div class="flex text-xl justify-center items-center">
       <div class="flex flex-col mr-10">
         <label for="tom">Escolha o tom</label>
-        <select name="tom" id="tom" v-model="objetoCifra.tom">
+        <select
+          name="tom"
+          id="tom"
+          class="border border-slate-300"
+          v-model="objetoCifra.tom"
+        >
           <option value="C" selected>C</option>
           <option value="D">D</option>
           <option value="E">E</option>
@@ -231,8 +322,65 @@ function listaDeAcordes() {
       <div
         class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
         @click="objetoCifra.cifra.push([])"
+        title="Pular linha"
       >
         ↲
+      </div>
+
+      <div
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
+        @click="backspace()"
+        title="Apagar acorde"
+      >
+        ←
+      </div>
+
+      <div
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
+        @click="reset()"
+        title="Apagar cifra"
+      >
+        X
+      </div>
+      <div
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
+        @click="print()"
+        title="Apagar cifra"
+      >
+        Imprimir pdf
+      </div>
+    </div>
+    <div
+      class="absolute z-10 right-8 top-7 w-5 h-10 cursor-pointer text-3xl"
+      @click="submenu = !submenu"
+    >
+      ⏷
+    </div>
+    <div
+      :class="[submenu ? 'h-0' : 'h-18 p-2']"
+      class="w-full overflow-hidden duration-100 flex justify-center"
+    >
+      <div class="flex flex-col mr-10">
+        <label for="musicName">Escreva o nome da música</label>
+        <input
+          type="text"
+          class="border border-slate-300 p-1 outline-none"
+          v-model="musicName"
+        />
+      </div>
+
+      <div v-for="(item, index) in dissonants" :key="index" class="">
+        <div
+          draggable="true"
+          @dragstart="chordToDrop = item"
+          class="p-1 lg:p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
+          @click="addChord(item.grade, item.variation)"
+        >
+          <span
+            >{{ listaDeAcordes()[item.grade]
+            }}<span>{{ item.variation }}</span></span
+          >
+        </div>
       </div>
     </div>
   </div>
@@ -248,8 +396,10 @@ function listaDeAcordes() {
       class="w-14 lg:w-40 bg-slate-100 h-screen"
     ></div>
     <div
+      id="imprimir"
       class="w-full flex flex-col items-center mt-20 text-md lg:text-3xl font-bold"
     >
+      <h1 class="text-3xl mb-5">{{ musicName }}</h1>
       <div
         v-for="(linha, indexLinha) in objetoCifra.cifra"
         :key="indexLinha"

@@ -10,6 +10,7 @@
   "dependencies": {
     "@vue/eslint-config-prettier": "^7.0.0",
     "jspdf": "^2.5.1",
+    "mobile-drag-drop": "^3.0.0-rc.0",
     "pinia": "^2.0.23",
     "prettier": "^2.7.1",
     "vue": "^3.2.41",

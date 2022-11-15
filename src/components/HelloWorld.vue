@@ -316,6 +316,15 @@ function listaDeAcordes() {
         </div>
       </div>
 
+      <div class="column" draggable="true"><header>A</header></div>
+
+      <div id="columns">
+        <div class="column" draggable="true"><header>A</header></div>
+        <div class="column" draggable="true"><header>B</header></div>
+        <div class="column" draggable="true"><header>C</header></div>
+        <div class="column" draggable="true"><header>X</header></div>
+      </div>
+
       <div
         class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
         @click="objetoCifra.cifra.push([])"
@@ -325,7 +334,7 @@ function listaDeAcordes() {
       </div>
 
       <div
-        :draggable="true"
+        @click="backspace()"
         class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
         title="Apagar acorde"
       >

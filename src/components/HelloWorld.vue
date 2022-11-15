@@ -304,7 +304,7 @@ function listaDeAcordes() {
 
       <div v-for="(item, index) in intervals" :key="index">
         <div
-          draggable="true"
+          :draggable="true"
           @dragstart="chordToDrop = item"
           class="p-1 lg:p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
           @click="addChord(item.grade, item.variation)"
@@ -325,8 +325,8 @@ function listaDeAcordes() {
       </div>
 
       <div
+        :draggable="true"
         class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
-        @click="backspace()"
         title="Apagar acorde"
       >
         ←

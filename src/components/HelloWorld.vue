@@ -54,11 +54,8 @@ function addChord(gradevalue, variationValue) {
   }
 }
 
-function changeChordBydrop(line, position) {
-  cifra[line][position] = {
-    grade: chordToDrop.value.grade,
-    variation: chordToDrop.value.variation,
-  }
+function bassChordBydrop(line, position) {
+  cifra[line][position].bass = chordToDrop.value.grade
 }
 function addChordBydrop(line, position, e) {
   if (cifra[line].length < 6) {
@@ -417,15 +414,18 @@ function listaDeAcordes() {
             <span
               draggable="true"
               @dragstart="chordToErase = { indexLinha, indexAcorde }"
-              class="p-1 lg:p-3 border-2 lg:border-4 border-orange-200 rounded cursor-pointer hover:bg-slate-100 select-none hover:border-red-300 duration-100"
+              class="px-3 border-2 lg:border-4 border-orange-200 rounded cursor-pointer hover:bg-slate-100 select-none hover:border-red-300 duration-100"
               @dragover.prevent
-              @drop="changeChordBydrop(indexLinha, indexAcorde)"
+              @drop="bassChordBydrop(indexLinha, indexAcorde)"
               @click="mutateChord(indexLinha, indexAcorde)"
             >
               <span
                 >{{ listaDeAcordes()[acorde.grade]
-                }}<span>{{ acorde.variation }}</span></span
-              >
+                }}<span>{{ acorde.variation }}</span>
+                <span v-if="acorde.bass"
+                  >/{{ listaDeAcordes()[acorde.bass] }}</span
+                >
+              </span>
             </span>
 
             <span

@@ -1,0 +1,22 @@
+
+{
+	"folders": [
+	  {
+		"path": "."
+	  }
+	],
+	"settings": {
+	  "editor.detectIndentation": false,
+	  "editor.tabSize": 2,
+	  "editor.autoClosingBrackets": "always",
+	  "editor.formatOnSave": true,
+	  
+	  "[vue]": {
+	   
+	  },
+	  "editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true
+	  },
+	  "editor.smoothScrolling": true,
+	}
+  }

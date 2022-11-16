@@ -1,6 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { jsPDF } from 'jspdf'
+import { polyfill } from 'mobile-drag-drop'
+import { scrollBehaviourDragImageTranslateOverride } from 'mobile-drag-drop/scroll-behaviour'
+
+polyfill({
+  dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
+})
 
 function print() {
   let doc = new jsPDF()
@@ -283,8 +289,8 @@ function listaDeAcordes() {
   <div
     class="w-full flex-col justify-center py-3 fixed bottom-0 bg-white shadow-[0_25px_60px_-15px_rgba(0,0,0,1)]"
   >
-    <div class="flex text-xl justify-center items-center">
-      <div class="flex flex-col mr-10">
+    <div class="flex flex-wrap text-xl justify-center lg:items-center">
+      <div class="flex flex-col mr-2 lg:mr-10">
         <label for="tom">Escolha o tom</label>
         <select
           name="tom"
@@ -304,9 +310,9 @@ function listaDeAcordes() {
 
       <div v-for="(item, index) in intervals" :key="index">
         <div
-          :draggable="true"
+          draggable="true"
           @dragstart="chordToDrop = item"
-          class="p-1 lg:p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
+          class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
           @click="addChord(item.grade, item.variation)"
         >
           <span
@@ -316,17 +322,8 @@ function listaDeAcordes() {
         </div>
       </div>
 
-      <div class="column" draggable="true"><header>A</header></div>
-
-      <div id="columns">
-        <div class="column" draggable="true"><header>A</header></div>
-        <div class="column" draggable="true"><header>B</header></div>
-        <div class="column" draggable="true"><header>C</header></div>
-        <div class="column" draggable="true"><header>X</header></div>
-      </div>
-
       <div
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
         @click="objetoCifra.cifra.push([])"
         title="Pular linha"
       >
@@ -335,21 +332,21 @@ function listaDeAcordes() {
 
       <div
         @click="backspace()"
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
         title="Apagar acorde"
       >
         ←
       </div>
 
       <div
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
         @click="reset()"
         title="Apagar cifra"
       >
         X
       </div>
       <div
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
         @click="print()"
         title="Apagar cifra"
       >
@@ -357,16 +354,16 @@ function listaDeAcordes() {
       </div>
     </div>
     <div
-      class="absolute z-10 right-8 top-7 w-5 h-10 cursor-pointer text-3xl"
+      class="absolute z-10 right-8 -top-10 lg:top-7 w-5 h-10 cursor-pointer text-3xl"
       @click="submenu = !submenu"
     >
       ⏷
     </div>
     <div
-      :class="[submenu ? 'h-0' : 'h-18 p-2']"
-      class="w-full overflow-hidden duration-100 flex justify-center"
+      :class="[submenu ? 'h-18 p-2' : 'h-0']"
+      class="w-full overflow-hidden duration-100 flex justify-center flex-wrap"
     >
-      <div class="flex flex-col mr-10">
+      <div class="flex flex-col mr-2 lg:mr-10">
         <label for="musicName">Escreva o nome da música</label>
         <input
           type="text"
@@ -375,11 +372,11 @@ function listaDeAcordes() {
         />
       </div>
 
-      <div v-for="(item, index) in dissonants" :key="index" class="">
+      <div v-for="(item, index) in dissonants" :key="index">
         <div
           draggable="true"
           @dragstart="chordToDrop = item"
-          class="p-1 lg:p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 m-2 select-none"
+          class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
           @click="addChord(item.grade, item.variation)"
         >
           <span
@@ -406,6 +403,7 @@ function listaDeAcordes() {
       class="w-full flex flex-col items-center mt-20 text-md lg:text-3xl font-bold"
     >
       <h1 class="text-3xl mb-5">{{ musicName }}</h1>
+
       <div
         v-for="(linha, indexLinha) in objetoCifra.cifra"
         :key="indexLinha"
@@ -422,7 +420,10 @@ function listaDeAcordes() {
             ></span>
             <span
               draggable="true"
-              @dragstart="chordToErase = { indexLinha, indexAcorde }"
+              @dragstart="
+                ;(chordToErase = { indexLinha, indexAcorde }),
+                  (chordToDrop = acorde)
+              "
               class="px-3 border-2 lg:border-4 border-orange-200 rounded cursor-pointer hover:bg-slate-100 select-none hover:border-red-300 duration-100"
               @dragover.prevent
               @drop="bassChordBydrop(indexLinha, indexAcorde)"

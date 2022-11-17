@@ -8,11 +8,8 @@ polyfill({
   dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
 })
 
-const objetoCifra = ref({
-  tom: 'C',
-  cifra: [],
-})
-const cifra = objetoCifra.value.cifra
+const tom = ref('C')
+const cifra = ref([])
 const chordToDrop = ref('')
 const chordToErase = ref(null)
 const musicName = ref('')
@@ -28,18 +25,18 @@ function dragRemoveBackground(e) {
 }
 
 function addChord(gradevalue, variationValue) {
-  if (cifra.length == 0) {
-    cifra.push([])
+  if (cifra.value.length == 0) {
+    cifra.value.push([])
   }
 
-  if (cifra[cifra.length - 1].length < 6) {
-    cifra[cifra.length - 1].push({
+  if (cifra.value[cifra.value.length - 1].length < 6) {
+    cifra.value[cifra.value.length - 1].push({
       grade: gradevalue,
       variation: variationValue,
     })
   } else {
-    cifra.push([])
-    cifra[cifra.length - 1].push({
+    cifra.value.push([])
+    cifra.value[cifra.value.length - 1].push({
       grade: gradevalue,
       variation: variationValue,
     })
@@ -64,13 +61,55 @@ function print() {
   })
 }
 
+function downloadFile(filename, text) {
+  let element = document.createElement('a')
+  element.setAttribute(
+    'href',
+    'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
+  )
+  element.setAttribute('download', filename)
+
+  element.style.display = 'none'
+  document.body.appendChild(element)
+
+  element.click()
+
+  document.body.removeChild(element)
+}
+
+function download() {
+  let json = [tom.value]
+  json.push(JSON.stringify(cifra.value))
+  if (musicName.value.length > 0) {
+    json.push(musicName.value)
+  }
+
+  downloadFile(musicName.value || 'cifra', JSON.stringify(json))
+}
+
+function handleFileSelect(event) {
+  const reader = new FileReader()
+  reader.onload = handleFileLoad
+  reader.readAsText(event.target.files[0])
+}
+
+function handleFileLoad(event) {
+  let json = JSON.parse(event.target.result)
+  cifra.value = []
+  tom.value = json[0]
+  if (json[2]) {
+    musicName.value = json[2]
+  }
+  JSON.parse(json[1]).forEach((element) => cifra.value.push(element))
+}
+
 function bassChordBydrop(line, position) {
-  cifra[line][position].bass = chordToDrop.value.grade
+  cifra.value[line][position].bass = chordToDrop.value.grade
 }
 function addChordBydrop(line, position, e) {
-  if (cifra[line].length < 6) {
+  if (cifra.value[line].length < 6) {
     e.target.classList.remove('hover')
-    cifra[line].splice(position, 0, {
+    cifra.value[line].splice(position, 0, {
       grade: chordToDrop.value.grade,
       variation: chordToDrop.value.variation,
     })
@@ -81,7 +120,7 @@ function addChordBydrop(line, position, e) {
 
 function eraseChordByDrop() {
   if (chordToErase.value) {
-    cifra[chordToErase.value.indexLinha].splice(
+    cifra.value[chordToErase.value.indexLinha].splice(
       chordToErase.value.indexAcorde,
       1
     )
@@ -93,67 +132,67 @@ function eraseChordByDrop() {
 }
 
 function reset() {
-  if (cifra.length > 0) {
+  if (cifra.value.length > 0) {
     if (window.confirm('Quer apagar toda esta cifra?')) {
-      while (cifra[0].length > 0) {
-        cifra[0].forEach(() => cifra.pop())
+      while (cifra.value[0].length > 0) {
+        cifra.value[0].forEach(() => cifra.value.pop())
       }
     }
   }
 }
 
 function backspace() {
-  if (cifra[cifra.length - 1].length - 1 > 0) {
-    cifra[cifra.length - 1].pop()
+  if (cifra.value[cifra.value.length - 1].length - 1 > 0) {
+    cifra.value[cifra.value.length - 1].pop()
   } else {
     console.log('apagou')
-    cifra.pop()
+    cifra.value.pop()
   }
 }
 
 function mutateChord(line, position) {
-  let valueOfVariation = cifra[line][position].variation
-  let valueofGrade = cifra[line][position].grade
+  let valueOfVariation = cifra.value[line][position].variation
+  let valueofGrade = cifra.value[line][position].grade
 
   switch (valueOfVariation) {
     case null:
-      cifra[line][position] = {
+      cifra.value[line][position] = {
         grade: valueofGrade,
         variation: 'm',
       }
       break
     case 'm':
-      cifra[line][position] = {
+      cifra.value[line][position] = {
         grade: valueofGrade,
         variation: 'm7',
       }
       break
     case 'm7':
-      cifra[line][position] = {
+      cifra.value[line][position] = {
         grade: valueofGrade,
         variation: 'm79',
       }
       break
     case 'm79':
-      cifra[line][position] = {
+      cifra.value[line][position] = {
         grade: valueofGrade,
         variation: '7',
       }
       break
     case '7':
-      cifra[line][position] = {
+      cifra.value[line][position] = {
         grade: valueofGrade,
         variation: '7M',
       }
       break
     case '7M':
-      cifra[line][position] = {
+      cifra.value[line][position] = {
         grade: valueofGrade,
         variation: '7M9',
       }
       break
     case '7M9':
-      cifra[line][position] = {
+      cifra.value[line][position] = {
         grade: valueofGrade,
         variation: null,
       }
@@ -181,7 +220,7 @@ const dissonants = ref([
 
 function listaDeAcordes() {
   let obj
-  switch (objetoCifra.value.tom) {
+  switch (tom.value) {
     case 'G':
       obj = {
         I: 'G',
@@ -336,7 +375,7 @@ function tamanhoDaFonte(linha) {
           name="tom"
           id="tom"
           class="border border-slate-300"
-          v-model="objetoCifra.tom"
+          v-model="tom"
         >
           <option value="C" selected>C</option>
           <option value="D">D</option>
@@ -364,7 +403,7 @@ function tamanhoDaFonte(linha) {
 
       <div
         class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
-        @click="objetoCifra.cifra.push([])"
+        @click="cifra.push([])"
         title="Pular linha"
       >
         ↲
@@ -387,11 +426,34 @@ function tamanhoDaFonte(linha) {
       </div>
       <div
         class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
+        @click="download()"
+        title="Apagar cifra"
+      >
+        Save
+      </div>
+      <div
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
+        onclick="document.getElementById('upload').click();"
+        title="Apagar cifra"
+      >
+        Load
+      </div>
+      <div
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
         @click="print()"
         title="Apagar cifra"
       >
-        Imprimir pdf
+        Print
       </div>
+
+      <form enctype="multipart/form-data">
+        <input
+          type="file"
+          id="upload"
+          class="hidden"
+          @change="handleFileSelect"
+        />
+      </form>
     </div>
     <div
       class="absolute z-10 right-8 -top-10 lg:top-7 w-5 h-10 cursor-pointer text-3xl"
@@ -452,7 +514,7 @@ function tamanhoDaFonte(linha) {
     <h1 class="text-xl lg:text-3xl mb-5 font-bold">{{ musicName }}</h1>
 
     <div
-      v-for="(linha, indexLinha) in objetoCifra.cifra"
+      v-for="(linha, indexLinha) in cifra"
       :key="indexLinha"
       class="h-14 lg:h-24 flex items-center lg:text-4xl font-bold"
       :class="tamanhoDaFonte(linha)"
@@ -509,7 +571,7 @@ function tamanhoDaFonte(linha) {
       <h1 class="text-3xl mb-5 font-bold">{{ musicName }}</h1>
 
       <div
-        v-for="(linha, indexLinha) in objetoCifra.cifra"
+        v-for="(linha, indexLinha) in cifra"
         :key="indexLinha"
         class="h-24 flex items-center text-4xl font-bold"
       >

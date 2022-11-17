@@ -297,6 +297,31 @@ function listaDeAcordes() {
   }
   return obj
 }
+
+function tamanhoDaFonte(linha) {
+  let retorno
+  switch (linha.length) {
+    case 1:
+      retorno = 'text-3xl'
+      break
+    case 2:
+      retorno = 'text-3xl'
+      break
+    case 3:
+      retorno = 'text-2xl'
+      break
+    case 4:
+      retorno = 'text-2xl'
+      break
+    case 5:
+      retorno = 'text-lg'
+      break
+    case 6:
+      retorno = 'text-md'
+      break
+  }
+  return retorno
+}
 </script>
 
 <template>
@@ -429,7 +454,8 @@ function listaDeAcordes() {
     <div
       v-for="(linha, indexLinha) in objetoCifra.cifra"
       :key="indexLinha"
-      class="h-14 lg:h-24 flex items-center text-md lg:text-4xl font-bold"
+      class="h-14 lg:h-24 flex items-center lg:text-4xl font-bold"
+      :class="tamanhoDaFonte(linha)"
     >
       <div v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
         <div class="flex items-center duration-100">

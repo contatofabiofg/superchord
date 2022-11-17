@@ -448,6 +448,7 @@ function listaDeAcordes() {
             "
             class="px-1 lg:px-2 rounded cursor-pointer hover:bg-slate-100 select-none hover:border-red-300 duration-100"
             @dragover.prevent
+            @dragenter.prevent
             @drop="bassChordBydrop(indexLinha, indexAcorde)"
             @click="mutateChord(indexLinha, indexAcorde)"
           >

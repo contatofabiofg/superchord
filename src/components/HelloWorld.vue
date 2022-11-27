@@ -16,6 +16,8 @@ const musicName = ref('')
 const submenu = ref(false)
 const eraseArea = ref(false)
 const pressModel = ref(true)
+const zoom = ref(false)
+const hide = ref(false)
 
 function dragAddBackground(e) {
   e.currentTarget.classList.add('hover')
@@ -366,9 +368,13 @@ function tamanhoDaFonte(linha) {
 <template>
   <!--TONE PICKER-->
   <div
-    class="w-full flex-col justify-center py-3 fixed bottom-0 bg-white shadow-[0_25px_60px_-15px_rgba(0,0,0,1)]"
+    class="z-10 w-full flex-col justify-center py-3 fixed bottom-0 bg-white shadow-[0_25px_60px_-15px_rgba(0,0,0,1)]"
+    :class="[hide ? 'h-0' : '']"
   >
-    <div class="flex flex-wrap text-xl justify-center lg:items-center">
+    <div
+      v-if="!hide"
+      class="flex flex-wrap text-xl justify-center lg:items-center"
+    >
       <div class="flex flex-col mr-2 lg:mr-10">
         <label for="tom">Escolha o tom</label>
         <select
@@ -445,6 +451,13 @@ function tamanhoDaFonte(linha) {
       >
         Print
       </div>
+      <div
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
+        @click="hide = true"
+        title="Apagar cifra"
+      >
+        Hide
+      </div>
 
       <form enctype="multipart/form-data">
         <input
@@ -457,9 +470,16 @@ function tamanhoDaFonte(linha) {
     </div>
     <div
       class="absolute z-10 right-8 -top-10 lg:top-7 w-5 h-10 cursor-pointer text-3xl"
-      @click="submenu = !submenu"
+      @click=";[(submenu = !submenu), (hide = false)]"
     >
       <img src="../assets/down.png" alt="Down button" class="w-5" />
+    </div>
+    <div
+      class="absolute z-10 right-8 -top-20 lg:-top-7 w-5 h-10 cursor-pointer text-3xl"
+      @click="zoom = !zoom"
+    >
+      <img v-if="!zoom" src="../assets/zoomin.png" alt="zoom in" class="w-5" />
+      <img v-else src="../assets/zoomout.png" alt="zoom out" class="w-5" />
     </div>
     <div
       :class="[submenu ? 'h-18 p-2' : 'h-0']"
@@ -510,7 +530,10 @@ function tamanhoDaFonte(linha) {
 
   <div class="w-full my-24 lg:my-32"></div>
 
-  <div class="w-full flex flex-col items-center">
+  <div
+    class="w-full flex flex-col items-center"
+    :class="[zoom ? ' transform scale-[135%]' : 'transform scale-[100%]']"
+  >
     <h1 class="text-xl lg:text-3xl mb-5 font-bold">{{ musicName }}</h1>
 
     <div

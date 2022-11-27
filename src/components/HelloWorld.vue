@@ -530,17 +530,17 @@ function tamanhoDaFonte(linha) {
 
   <div class="w-full my-24 lg:my-32"></div>
 
-  <div
-    class="w-full flex flex-col items-center"
-    :class="[zoom ? ' transform scale-[135%]' : 'transform scale-[100%]']"
-  >
+  <div class="w-full flex flex-col items-center">
     <h1 class="text-xl lg:text-3xl mb-5 font-bold">{{ musicName }}</h1>
 
     <div
       v-for="(linha, indexLinha) in cifra"
       :key="indexLinha"
       class="h-14 lg:h-24 flex items-center lg:text-4xl font-bold"
-      :class="tamanhoDaFonte(linha)"
+      :class="[
+        zoom ? ' transform scale-[135%]' : 'transform scale-[100%]',
+        tamanhoDaFonte(linha),
+      ]"
     >
       <div v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
         <div class="flex items-center duration-100">

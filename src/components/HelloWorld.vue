@@ -469,13 +469,13 @@ function tamanhoDaFonte(linha) {
       </form>
     </div>
     <div
-      class="absolute z-10 right-8 -top-10 lg:top-7 w-5 h-10 cursor-pointer text-3xl"
+      class="absolute z-10 right-8 -top-10 w-5 h-10 cursor-pointer text-3xl"
       @click=";[(submenu = !submenu), (hide = false)]"
     >
       <img src="../assets/down.png" alt="Down button" class="w-5" />
     </div>
     <div
-      class="absolute z-10 right-8 -top-20 lg:-top-7 w-5 h-10 cursor-pointer text-3xl"
+      class="absolute z-10 right-8 -top-20 w-5 h-10 cursor-pointer text-3xl"
       @click="zoom = !zoom"
     >
       <img v-if="!zoom" src="../assets/zoomin.png" alt="zoom in" class="w-5" />

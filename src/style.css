@@ -9,3 +9,18 @@
   user-select: none;
   touch-action: none;
 }
+
+html {
+  @apply
+  bg-slate-300
+}
+
+input {
+  @apply
+  drop-shadow 
+  border 
+  border-slate-200 
+  p-1 
+  outline-0 
+  my-2
+}

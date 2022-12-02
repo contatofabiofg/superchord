@@ -1,5 +1,3 @@
-<!-- eslint-disable no-undef -->
-<!-- eslint-disable no-unused-vars -->
 <script setup>
 import { ref, onMounted } from 'vue'
 import { jsPDF } from 'jspdf'

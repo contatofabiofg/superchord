@@ -552,6 +552,13 @@ function tamanhoDaFonte(linha) {
           >
         </div>
       </div>
+      <div
+        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
+        @click="router.push('/multichords')"
+        title="MultiChords"
+      >
+        MultiChords
+      </div>
     </div>
   </div>
 

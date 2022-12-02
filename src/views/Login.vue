@@ -72,29 +72,22 @@ function handleGoogleLogin() {
 
 <template>
   <div
-    class="flex flex-col justify-center w-[500px] m-auto mt-32 p-5 bg-white drop-shadow-lg rounded-md"
+    class="flex flex-col justify-center w-[500px] m-auto mt-20 p-5 bg-white drop-shadow-lg rounded-md"
   >
     <img src="../assets/superchord.png" alt="" class="w-60 m-auto mb-5" />
 
     <label for="email">Email</label>
-    <input
-      class="drop-shadow p-1 outline-0 my-2"
-      type="text"
-      id="email"
-      v-model="emailInput"
-      @keyup.enter="login()"
-    />
+    <input type="text" id="email" v-model="emailInput" @keyup.enter="login()" />
     <label for="pass">Senha</label>
     <input
-      class="drop-shadow p-1 outline-0 my-2"
       type="password"
       id="pass"
       v-model="passInput"
       @keyup.enter="login()"
     />
     <div class="flex justify-between text-xs my-2">
-      <a href="" @click="router.push({ name: 'SiginUp' })">Criar nova conta</a>
-      <a href="" @click="router.push({ name: 'ResetPass' })"
+      <a href="" @click="router.push({ name: 'siginup' })">Criar nova conta</a>
+      <a href="" @click="router.push({ name: 'resetpass' })"
         >Esqueceu a senha?</a
       >
     </div>

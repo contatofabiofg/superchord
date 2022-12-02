@@ -3,6 +3,12 @@ import { ref } from 'vue'
 import { jsPDF } from 'jspdf'
 import { polyfill } from 'mobile-drag-drop'
 import { scrollBehaviourDragImageTranslateOverride } from 'mobile-drag-drop/scroll-behaviour'
+import { createChord } from '../firebase'
+import { useRouter } from 'vue-router'
+import { getAuth } from 'firebase/auth'
+
+const auth = getAuth()
+const router = useRouter()
 
 polyfill({
   dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
@@ -18,6 +24,7 @@ const eraseArea = ref(false)
 const pressModel = ref(true)
 const zoom = ref(false)
 const hide = ref(false)
+const idChord = ref(null)
 
 function dragAddBackground(e) {
   e.currentTarget.classList.add('hover')
@@ -63,6 +70,13 @@ function print() {
   })
 }
 
+function logout() {
+  auth.signOut()
+
+  router.push({ name: 'login' })
+}
+
+/*
 function downloadFile(filename, text) {
   let element = document.createElement('a')
   element.setAttribute(
@@ -87,6 +101,29 @@ function download() {
   }
 
   downloadFile(musicName.value || 'cifra', JSON.stringify(json))
+}
+*/
+
+function saveOnline() {
+  let json = [tom.value]
+  json.push(JSON.stringify(cifra.value))
+  if (musicName.value.length > 0) {
+    json.push(musicName.value)
+  }
+
+  let item = {
+    tom: tom.value,
+    cifra: JSON.stringify(cifra.value),
+    name: musicName.value,
+  }
+
+  if (idChord.value) {
+    item.id = idChord.value
+  } else {
+    item.id = new Date().getTime().toString()
+  }
+
+  createChord(item)
 }
 
 function handleFileSelect(event) {
@@ -366,6 +403,14 @@ function tamanhoDaFonte(linha) {
 </script>
 
 <template>
+  <button @click="logout()">
+    <img
+      src="../assets/logout.png"
+      class="fixed top-3 left-3 w-12 p-2 rounded-full bg-white drop-shadow-lg z-20"
+      alt=""
+    />
+  </button>
+
   <!--TONE PICKER-->
   <div
     class="z-10 w-full flex-col justify-center py-3 fixed bottom-0 bg-white shadow-[0_25px_60px_-15px_rgba(0,0,0,1)]"
@@ -432,8 +477,8 @@ function tamanhoDaFonte(linha) {
       </div>
       <div
         class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
-        @click="download()"
-        title="Apagar cifra"
+        @click="saveOnline()"
+        title="Save"
       >
         Save
       </div>

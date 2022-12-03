@@ -24,3 +24,16 @@ input {
   outline-0 
   my-2
 }
+
+button {
+  @apply
+  p-3 
+  border 
+  border-slate-300 
+  rounded 
+  hover:bg-slate-100 
+  lg:m-2 
+  select-none 
+  bg-white/75 
+  font-bold
+}

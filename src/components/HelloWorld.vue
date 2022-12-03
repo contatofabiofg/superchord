@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { jsPDF } from 'jspdf'
 import { polyfill } from 'mobile-drag-drop'
 import { scrollBehaviourDragImageTranslateOverride } from 'mobile-drag-drop/scroll-behaviour'
-import { createChord } from '../firebase'
+import { createChord, getAllChords } from '../firebase'
 import { useRouter } from 'vue-router'
 import { getAuth } from 'firebase/auth'
 
@@ -18,13 +18,34 @@ const tom = ref('C')
 const cifra = ref([])
 const chordToDrop = ref('')
 const chordToErase = ref(null)
-const musicName = ref('')
+const musicName = ref('Nome da Música')
 const submenu = ref(false)
 const eraseArea = ref(false)
 const pressModel = ref(true)
 const zoom = ref(false)
 const hide = ref(false)
 const idChord = ref(null)
+const chordList = ref([])
+const modal = ref(false)
+
+onMounted(() => {
+  getChords()
+})
+
+async function getChords() {
+  let response = await getAllChords()
+  console.log(response)
+  response.forEach((element) => {
+    let cifraJSON = JSON.parse(element.data().cifra)
+    let obj = {
+      name: element.data().name,
+      cifra: cifraJSON,
+      tom: element.data().tom,
+      id: element.data().id,
+    }
+    chordList.value.push(obj)
+  })
+}
 
 function dragAddBackground(e) {
   e.currentTarget.classList.add('hover')
@@ -124,6 +145,24 @@ function saveOnline() {
   }
 
   createChord(item)
+}
+
+function loadOnline() {
+  modal.value = true
+  document.querySelector('body').style.overflow = 'hidden'
+}
+
+function loadMusic(item) {
+  tom.value = item.tom
+  cifra.value = item.cifra
+  musicName.value = item.name
+  idChord.value = item.id
+  modal.value = false
+}
+
+function closeModal() {
+  modal.value = false
+  document.querySelector('body').style.overflow = 'auto'
 }
 
 function handleFileSelect(event) {
@@ -411,9 +450,34 @@ function tamanhoDaFonte(linha) {
     />
   </button>
 
+  <!--MODAL-->
+
+  <div
+    v-if="modal"
+    class="fixed top-0 left-0 right-0 bottom-0 z-20 w-screen h-screen bg-black/50 overflow-hidden flex justify-center items-center"
+    @click="closeModal()"
+  >
+    <div
+      class="bg-white p-3 w-[300px] h-[300px] overflow-hidden drop-shadow-lg rounded-md"
+    >
+      <h1 class="m-auto">Suas músicas</h1>
+
+      <ul class="w-[300px] h-[250px] overflow-y-scroll">
+        <li
+          v-for="(item, index) in chordList"
+          :key="index"
+          @click="loadMusic(item)"
+          class="p-2 w-[95%] bg-white/75 drop-shadow mb-2 cursor-pointer hover:bg-white"
+        >
+          {{ item.name }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
   <!--TONE PICKER-->
   <div
-    class="z-10 w-full flex-col justify-center py-3 fixed bottom-0 bg-white shadow-[0_25px_60px_-15px_rgba(0,0,0,1)]"
+    class="z-10 w-full flex-col justify-center py-3 fixed bottom-0 bg-slate-600 shadow-[0_25px_60px_-15px_rgba(0,0,0,1)]"
     :class="[hide ? 'h-0' : '']"
   >
     <div
@@ -439,70 +503,27 @@ function tamanhoDaFonte(linha) {
       </div>
 
       <div v-for="(item, index) in intervals" :key="index">
-        <div
+        <button
           draggable="true"
           @dragstart="chordToDrop = item"
-          class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
           @click="addChord(item.grade, item.variation)"
         >
           <span
             >{{ listaDeAcordes()[item.grade]
             }}<span>{{ item.variation }}</span></span
           >
-        </div>
+        </button>
       </div>
 
-      <div
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
-        @click="cifra.push([])"
-        title="Pular linha"
-      >
-        ↲
-      </div>
+      <button @click="cifra.push([])" title="Pular linha">↲</button>
 
-      <div
-        @click="backspace()"
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
-        title="Apagar acorde"
-      >
-        ←
-      </div>
+      <button @click="backspace()" title="Apagar acorde">←</button>
 
-      <div
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
-        @click="reset()"
-        title="Apagar cifra"
-      >
-        X
-      </div>
-      <div
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
-        @click="saveOnline()"
-        title="Save"
-      >
-        Save
-      </div>
-      <div
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
-        onclick="document.getElementById('upload').click();"
-        title="Apagar cifra"
-      >
-        Load
-      </div>
-      <div
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
-        @click="print()"
-        title="Apagar cifra"
-      >
-        Print
-      </div>
-      <div
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
-        @click="hide = true"
-        title="Apagar cifra"
-      >
-        Hide
-      </div>
+      <button @click="reset()" title="Apagar cifra">X</button>
+      <button @click="saveOnline()" title="Save">Save</button>
+      <button @click="loadOnline()" title="Apagar cifra">Load</button>
+      <button @click="print()" title="Apagar cifra">Print</button>
+      <button @click="hide = true" title="Apagar cifra">Hide</button>
 
       <form enctype="multipart/form-data">
         <input
@@ -530,47 +551,33 @@ function tamanhoDaFonte(linha) {
       :class="[submenu ? 'h-18 p-2' : 'h-0']"
       class="w-full overflow-hidden duration-100 flex justify-center flex-wrap"
     >
-      <div class="flex flex-col mr-2 lg:mr-10">
-        <label for="musicName">Escreva o nome da música</label>
-        <input
-          type="text"
-          class="border border-slate-300 p-1 outline-none"
-          v-model="musicName"
-        />
-      </div>
-
       <div v-for="(item, index) in dissonants" :key="index">
-        <div
+        <button
           draggable="true"
           @dragstart="chordToDrop = item"
-          class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
           @click="addChord(item.grade, item.variation)"
         >
           <span
             >{{ listaDeAcordes()[item.grade]
             }}<span>{{ item.variation }}</span></span
           >
-        </div>
+        </button>
       </div>
-      <div
-        class="p-3 border border-slate-300 rounded cursor-pointer hover:bg-slate-100 lg:m-2 select-none"
-        @click="router.push('/multichords')"
-        title="MultiChords"
-      >
+      <button @click="router.push('/multichords')" title="MultiChords">
         MultiChords
-      </div>
+      </button>
     </div>
   </div>
 
   <!--AREA DE EXIBIÇÃO-->
   <div
-    :class="[eraseArea ? 'bg-red-100' : 'bg-slate-50']"
+    :class="[eraseArea ? 'bg-red-100' : 'bg-slate-50', hide ? 'h-0' : 'h-16']"
     id="eraseTop"
     @dragover.prevent="eraseArea = true"
     @dragenter.prevent
     @dragleave="eraseArea = false"
     @drop="eraseChordByDrop()"
-    class="fixed top-0 w-full flex justify-center items-center h-16 lg:h-24 duration-100"
+    class="fixed top-0 w-full flex justify-center items-center duration-100 overflow-hidden"
   >
     <img
       src="../assets/trash.png"
@@ -582,9 +589,14 @@ function tamanhoDaFonte(linha) {
 
   <div class="w-full my-24 lg:my-32"></div>
 
-  <div class="w-full flex flex-col items-center">
-    <h1 class="text-xl lg:text-3xl mb-5 font-bold">{{ musicName }}</h1>
-
+  <div
+    class="w-[90%] min-h-[90vh] flex flex-col items-center bg-white drop-shadow-lg m-auto pb-48 duration-100"
+    :class="[hide ? '-mt-16' : 'mt-0']"
+  >
+    <input
+      class="text-xl lg:text-3xl my-5 ml-32 font-bold border-0 drop-shadow-none"
+      v-model="musicName"
+    />
     <div
       v-for="(linha, indexLinha) in cifra"
       :key="indexLinha"

@@ -12,9 +12,13 @@ const multiChord = ref([])
 const chordList = ref([])
 const pressModel = ref(true)
 const zoom = ref({})
+const mobileView = ref(true)
 
 onMounted(() => {
   getChords()
+  if (window.innerWidth > 900) {
+    mobileView.value = false
+  }
 })
 
 async function getChords() {
@@ -206,107 +210,69 @@ function listaDeAcordes(tom) {
 </script>
 
 <template>
-  <button @click="print()">
-    <img
-      src="../assets/printer.png"
-      class="fixed top-3 right-3 w-12 p-2 rounded-full bg-white drop-shadow-lg"
-      alt=""
-    />
-  </button>
-
-  <!-- Sidebar -->
-  <div class="fixed w-[300px] top-0 bottom-0 bg-slate-200 drop-shadow-2xl p-3">
-    <h1 @click="getChords()" class="text-xl font-bold mb-4">Suas Cifras</h1>
-    <ul class="h-[90vh] overflow-y-scroll">
-      <li
-        v-for="(item, index) in chordList"
-        :key="index"
-        @click="adicionar(item)"
-        class="p-2 w-[95%] bg-white/75 drop-shadow mb-2 cursor-pointer hover:bg-white"
-      >
-        {{ item.name }}
-      </li>
-    </ul>
-  </div>
-
-  <!-- Área de exibição -->
-
-  <div
-    class="p-3 w-[580px] h-[900px] ml-[500px] mb-10 bg-white border border-slate-400"
-  >
-    <div class="w-full h-full flex flex-col flex-wrap">
-      <div
-        class="relative h-fit p-3 border border-slate-400 inline"
-        v-for="(item, index) in multiChord"
-        :key="index"
-      >
-        <div class="text-xl px-2 absolute top-0 left-0 border border-slate-400">
-          {{ item.name }}
-          <img
-            v-if="!zoom[index]"
-            src="../assets/zoomin.png"
-            class="w-5 absolute top-1 -right-7 cursor-pointer"
-            alt=""
-            @click="zoom[index] = true"
-          />
-          <img
-            v-else
-            src="../assets/zoomout.png"
-            class="w-5 absolute top-1 -right-7 cursor-pointer"
-            alt=""
-            @click="zoom[index] = false"
-          />
-        </div>
-        <div
-          class="text-xl px-2 absolute top-0 right-0 border border-slate-400 cursor-pointer"
-          @click="deleteChord(index)"
-        >
-          X
-        </div>
-
-        <div class="mt-8">
-          <div
-            v-for="(linha, indexLinha) in item.cifra"
-            :key="indexLinha"
-            class="h-10 lg:h-10 flex items-center font-bold"
-          >
-            <div v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
-              <div class="flex" :class="[zoom[index] ? 'text-lg' : 'text-sm']">
-                <span class="w-1 lg:w-2 h-16"></span>
-
-                <span
-                  >{{ listaDeAcordes(item.tom)[acorde.grade]
-                  }}<span>{{ acorde.variation }}</span>
-                  <span v-if="acorde.bass"
-                    >/{{ listaDeAcordes(item.tom)[acorde.bass] }}</span
-                  >
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Area de impressão -->
-
-  <div class="fixed top-0 -right-[2000px]">
-    <div id="printArea" class="w-[550px] h-[900px] absolute -ml-4 -mt-8">
+  <div v-if="!mobileView">
+    <button @click="print()">
       <img
-        src="../assets/superchord.png"
-        class="mx-auto w-36 mb-4 ml-64"
+        src="../assets/printer.png"
+        class="fixed top-3 right-3 w-12 p-2 rounded-full bg-white drop-shadow-lg"
         alt=""
       />
+    </button>
+
+    <!-- Sidebar -->
+    <div
+      class="fixed w-[300px] top-0 bottom-0 bg-gradient-to-r from-zinc-800 to-zinc-700 drop-shadow-2xl p-3 overflow-hidden"
+    >
+      <h1 @click="getChords()" class="text-xl text-white font-bold mb-4">
+        Suas Cifras
+      </h1>
+      <ul class="h-[90vh] w-[115%] overflow-y-scroll">
+        <li
+          v-for="(item, index) in chordList"
+          :key="index"
+          @click="adicionar(item)"
+          class="p-2 text-white w-[90%] border-b border-zinc-600 mb-2 cursor-pointer hover:bg-white/25"
+        >
+          {{ item.name }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Área de exibição -->
+
+    <div
+      class="p-3 w-[580px] h-[900px] ml-[500px] mb-10 bg-white border border-slate-400"
+    >
       <div class="w-full h-full flex flex-col flex-wrap">
         <div
           class="relative h-fit p-3 border border-slate-400 inline"
           v-for="(item, index) in multiChord"
           :key="index"
         >
-          <div class="text-xl absolute top-0 left-2">
-            <span class="text-orange-600">{{ item.name }}</span>
-            <div></div>
+          <div
+            class="text-xl px-2 absolute top-0 left-0 border border-slate-400"
+          >
+            {{ item.name }}
+            <img
+              v-if="!zoom[index]"
+              src="../assets/zoomin.png"
+              class="w-5 absolute top-1 -right-7 cursor-pointer"
+              alt=""
+              @click="zoom[index] = true"
+            />
+            <img
+              v-else
+              src="../assets/zoomout.png"
+              class="w-5 absolute top-1 -right-7 cursor-pointer"
+              alt=""
+              @click="zoom[index] = false"
+            />
+          </div>
+          <div
+            class="text-xl px-2 absolute top-0 right-0 border border-slate-400 cursor-pointer"
+            @click="deleteChord(index)"
+          >
+            X
           </div>
 
           <div class="mt-8">
@@ -318,9 +284,9 @@ function listaDeAcordes(tom) {
               <div v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
                 <div
                   class="flex"
-                  :class="[zoom[index] ? 'text-xl' : 'text-md']"
+                  :class="[zoom[index] ? 'text-lg' : 'text-sm']"
                 >
-                  <span class="w-1 lg:w-3 h-16"></span>
+                  <span class="w-1 lg:w-2 h-16"></span>
 
                   <span
                     >{{ listaDeAcordes(item.tom)[acorde.grade]
@@ -336,7 +302,57 @@ function listaDeAcordes(tom) {
         </div>
       </div>
     </div>
+
+    <!-- Area de impressão -->
+
+    <div class="fixed top-0 -right-[2000px]">
+      <div id="printArea" class="w-[550px] h-[900px] absolute -ml-4 -mt-8">
+        <img
+          src="../assets/superchord.png"
+          class="mx-auto w-36 mb-4 ml-64"
+          alt=""
+        />
+        <div class="w-full h-full flex flex-col flex-wrap">
+          <div
+            class="relative h-fit p-3 border border-slate-400 inline"
+            v-for="(item, index) in multiChord"
+            :key="index"
+          >
+            <div class="text-xl absolute top-0 left-2">
+              <span class="text-orange-600">{{ item.name }}</span>
+              <div></div>
+            </div>
+
+            <div class="mt-8">
+              <div
+                v-for="(linha, indexLinha) in item.cifra"
+                :key="indexLinha"
+                class="h-10 lg:h-10 flex items-center font-bold"
+              >
+                <div v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
+                  <div
+                    class="flex"
+                    :class="[zoom[index] ? 'text-xl' : 'text-md']"
+                  >
+                    <span class="w-1 lg:w-3 h-16"></span>
+
+                    <span
+                      >{{ listaDeAcordes(item.tom)[acorde.grade]
+                      }}<span>{{ acorde.variation }}</span>
+                      <span v-if="acorde.bass"
+                        >/{{ listaDeAcordes(item.tom)[acorde.bass] }}</span
+                      >
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+  <div v-else>Por hora, acesse essa área de uma tela maior</div>
 </template>
 
 <style scoped></style>

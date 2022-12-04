@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
 * {
   margin: 0;
   padding: 0;
@@ -12,7 +14,9 @@
 
 html {
   @apply
-  bg-slate-300
+  bg-gradient-to-r 
+  from-zinc-500 
+  to-zinc-400
 }
 
 input {
@@ -29,11 +33,13 @@ button {
   @apply
   p-3 
   border 
-  border-slate-300 
+  border-zinc-700 
   rounded 
-  hover:bg-slate-100 
   lg:m-2 
   select-none 
-  bg-white/75 
+  bg-gradient-to-r 
+  from-zinc-400 
+  to-zinc-300
   font-bold
+  duration-100
 }

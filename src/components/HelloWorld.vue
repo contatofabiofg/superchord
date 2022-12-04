@@ -445,8 +445,8 @@ function tamanhoDaFonte(linha) {
   <button @click="logout()">
     <img
       src="../assets/logout.png"
-      class="fixed top-3 left-3 w-12 p-2 rounded-full bg-white drop-shadow-lg z-20"
-      alt=""
+      class="fixed top-3 left-3 w-10 p-2 rounded-full bg-white drop-shadow-lg z-20"
+      alt="Sair"
     />
   </button>
 
@@ -477,15 +477,15 @@ function tamanhoDaFonte(linha) {
 
   <!--TONE PICKER-->
   <div
-    class="z-10 w-full flex-col justify-center py-3 fixed bottom-0 bg-slate-600 shadow-[0_25px_60px_-15px_rgba(0,0,0,1)]"
+    class="z-10 w-full flex-col justify-center py-3 fixed bottom-0 shadow-[0_25px_60px_-15px_rgba(0,0,0,1)] bg-gradient-to-r from-zinc-800 to-zinc-700"
     :class="[hide ? 'h-0' : '']"
   >
     <div
       v-if="!hide"
       class="flex flex-wrap text-xl justify-center lg:items-center"
     >
-      <div class="flex flex-col mr-2 lg:mr-10">
-        <label for="tom">Escolha o tom</label>
+      <div class="flex flex-col -mt-2 mr-2 lg:mr-10">
+        <label for="tom" class="text-white">Escolha o tom</label>
         <select
           name="tom"
           id="tom"
@@ -571,7 +571,7 @@ function tamanhoDaFonte(linha) {
 
   <!--AREA DE EXIBIÇÃO-->
   <div
-    :class="[eraseArea ? 'bg-red-100' : 'bg-slate-50', hide ? 'h-0' : 'h-16']"
+    :class="[eraseArea ? 'bg-red-100' : 'bg-zinc-200', hide ? 'h-0' : 'h-16']"
     id="eraseTop"
     @dragover.prevent="eraseArea = true"
     @dragenter.prevent
@@ -594,7 +594,7 @@ function tamanhoDaFonte(linha) {
     :class="[hide ? '-mt-16' : 'mt-0']"
   >
     <input
-      class="text-xl lg:text-3xl my-5 ml-32 font-bold border-0 drop-shadow-none"
+      class="text-xl lg:text-3xl my-5 ml-5 font-bold border-0 drop-shadow-none bg-transparent"
       v-model="musicName"
     />
     <div

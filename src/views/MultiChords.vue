@@ -211,13 +211,13 @@ function listaDeAcordes(tom) {
 
 <template>
   <div v-if="!mobileView">
-    <button @click="print()">
+    <a @click="print()">
       <img
         src="../assets/printer.png"
-        class="fixed top-3 right-3 w-12 p-2 rounded-full bg-white drop-shadow-lg"
+        class="fixed top-3 right-3 w-12 p-2 rounded-full bg-white drop-shadow-lg cursor-pointer"
         alt=""
       />
-    </button>
+    </a>
 
     <!-- Sidebar -->
     <div
@@ -241,7 +241,7 @@ function listaDeAcordes(tom) {
     <!-- Área de exibição -->
 
     <div
-      class="p-3 w-[580px] h-[900px] ml-[500px] mb-10 bg-white border border-slate-400"
+      class="p-3 w-[580px] h-[900px] ml-[500px] mb-10 bg-white mt-5 drop-shadow-lg"
     >
       <div class="w-full h-full flex flex-col flex-wrap">
         <div

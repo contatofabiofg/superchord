@@ -40,12 +40,14 @@ function createUser() {
   <div
     class="flex flex-col justify-center w-[500px] m-auto mt-20 p-5 bg-white drop-shadow-lg rounded-md"
   >
+    <img src="../assets/superchord.png" alt="" class="w-60 m-auto mb-5" />
+
     <label for="email">E-mail</label>
     <input type="text" id="email" v-model="emailInput" />
     <label for="pass">Senha</label>
     <input type="password" id="pass" v-model="passInput" />
-    <button @click="createUser">Cadastrar</button>
-    <button @click="router.push('/')" class="w-full">Ir para a Home</button>
+    <a class="button2 my-2" @click="createUser">Cadastrar</a>
+    <a @click="router.push('/')" class="button2">Ir para a Home</a>
   </div>
 </template>
 

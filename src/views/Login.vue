@@ -72,7 +72,7 @@ function handleGoogleLogin() {
 
 <template>
   <div
-    class="flex flex-col justify-center w-[500px] m-auto mt-20 p-5 bg-white drop-shadow-lg rounded-md"
+    class="flex flex-col justify-center w-[90vw] lg:w-[50vw] m-auto mt-20 p-5 bg-white drop-shadow-lg rounded-md"
   >
     <img src="../assets/superchord.png" alt="" class="w-60 m-auto mb-5" />
 
@@ -85,17 +85,17 @@ function handleGoogleLogin() {
       v-model="passInput"
       @keyup.enter="login()"
     />
-    <div class="flex justify-between text-xs my-2">
+    <div class="flex justify-between text-xs my-2 font-bold">
       <a href="" @click="router.push({ name: 'siginup' })">Criar nova conta</a>
       <a href="" @click="router.push({ name: 'resetpass' })"
         >Esqueceu a senha?</a
       >
     </div>
-    <button @click="login()">Entrar</button>
+    <a class="button2" @click="login()">Entrar</a>
 
     <div
       tabindex="0"
-      class="w-full p-3 border bg-white rounded-md drop-shadow-lg border-slate-200 mb-2 mt-4 text-center select-none"
+      class="w-full p-3 border-2 bg-white rounded-md border-zinc-300 mb-2 mt-4 text-center select-none"
       :class="'opacity-50'"
     >
       Entrar com Facebook
@@ -108,7 +108,7 @@ function handleGoogleLogin() {
     </div>
     <div
       tabindex="0"
-      class="w-full p-3 border bg-white rounded-md drop-shadow-lg hover:bg-slate-100 border-slate-200 text-center cursor-pointer select-none"
+      class="w-full p-3 border-2 bg-white rounded-md border-zinc-300 mb-2 mt-4 text-center select-none cursor-pointer select-none"
       @click="handleGoogleLogin"
     >
       Entrar com Google

@@ -1,14 +1,24 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { jsPDF } from 'jspdf'
 import { polyfill } from 'mobile-drag-drop'
 import { scrollBehaviourDragImageTranslateOverride } from 'mobile-drag-drop/scroll-behaviour'
-import { createChord, getAllChords } from '../firebase'
+import {
+  createChord,
+  getAllChords,
+  updateChord,
+  keyFire,
+  userCol,
+} from '../firebase'
 import { useRouter } from 'vue-router'
 import { getAuth } from 'firebase/auth'
 
 const auth = getAuth()
 const router = useRouter()
+
+watch(keyFire, () => {
+  getChords()
+})
 
 polyfill({
   dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
@@ -27,12 +37,21 @@ const hide = ref(false)
 const idChord = ref(null)
 const chordList = ref([])
 const modal = ref(false)
+const showMusicList = ref(false)
 
 onMounted(() => {
   getChords()
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      //if esc key was not pressed in combination with ctrl or alt or shift
+      closeModal()
+    }
+  })
 })
 
 async function getChords() {
+  console.log('getChords')
+  chordList.value = []
   let response = await getAllChords()
   console.log(response)
   response.forEach((element) => {
@@ -89,6 +108,8 @@ function print() {
     width: 170, //target width in the PDF document
     windowWidth: 650, //window width in CSS pixels
   })
+
+  closeModal()
 }
 
 function logout() {
@@ -140,14 +161,19 @@ function saveOnline() {
 
   if (idChord.value) {
     item.id = idChord.value
+    updateChord(item).then(() => {
+      closeModal()
+    })
   } else {
-    item.id = new Date().getTime().toString()
+    idChord.value = new Date().getTime().toString()
+    item.id = idChord.value
+    createChord(item).then(() => {
+      closeModal()
+    })
   }
-
-  createChord(item)
 }
 
-function loadOnline() {
+function showModal() {
   modal.value = true
   document.querySelector('body').style.overflow = 'hidden'
 }
@@ -157,11 +183,11 @@ function loadMusic(item) {
   cifra.value = item.cifra
   musicName.value = item.name
   idChord.value = item.id
-  modal.value = false
 }
 
 function closeModal() {
   modal.value = false
+  showMusicList.value = false
   document.querySelector('body').style.overflow = 'auto'
 }
 
@@ -212,6 +238,23 @@ function eraseChordByDrop() {
 function reset() {
   if (cifra.value.length > 0) {
     if (window.confirm('Quer apagar toda esta cifra?')) {
+      while (cifra.value[0].length > 0) {
+        cifra.value[0].forEach(() => cifra.value.pop())
+      }
+    }
+  }
+}
+
+function newChord() {
+  if (cifra.value.length > 0) {
+    if (
+      window.confirm(
+        'Ao começar uma nova cifra, todo progresso não salvo será perdido. Continuar?'
+      )
+    ) {
+      musicName.value = 'Nome da música'
+      idChord.value = null
+      closeModal()
       while (cifra.value[0].length > 0) {
         cifra.value[0].forEach(() => cifra.value.pop())
       }
@@ -270,6 +313,12 @@ function mutateChord(line, position) {
       }
       break
     case '7M9':
+      cifra.value[line][position] = {
+        grade: valueofGrade,
+        variation: 'º',
+      }
+      break
+    case 'º':
       cifra.value[line][position] = {
         grade: valueofGrade,
         variation: null,
@@ -442,36 +491,84 @@ function tamanhoDaFonte(linha) {
 </script>
 
 <template>
-  <button @click="logout()">
+  <a @click="logout()">
     <img
       src="../assets/logout.png"
-      class="fixed top-3 left-3 w-10 p-2 rounded-full bg-white drop-shadow-lg z-20"
+      class="fixed top-3 left-3 w-10 p-2 rounded-full bg-white drop-shadow-lg z-20 cursor-pointer"
       alt="Sair"
     />
-  </button>
+  </a>
 
   <!--MODAL-->
 
   <div
     v-if="modal"
     class="fixed top-0 left-0 right-0 bottom-0 z-20 w-screen h-screen bg-black/50 overflow-hidden flex justify-center items-center"
-    @click="closeModal()"
   >
     <div
-      class="bg-white p-3 w-[300px] h-[300px] overflow-hidden drop-shadow-lg rounded-md"
+      class="relative bg-white p-3 w-[300px] h-fit overflow-hidden drop-shadow-lg rounded-md"
     >
-      <h1 class="m-auto">Suas músicas</h1>
+      <img src="../assets/superchord.png" class="w-40 m-auto my-2" alt="" />
+      <p class="text-center text-sm">Você está logado como:</p>
+      <p class="text-center text-sm italic mb-4">{{ userCol }}</p>
 
-      <ul class="w-[300px] h-[250px] overflow-y-scroll">
+      <div v-if="!showMusicList">
+        <div class="flex">
+          <a class="button2 block m-1" @click="newChord()" title="New Chord"
+            >New</a
+          >
+          <a class="button2 block m-1" @click="saveOnline()" title="Save"
+            >Save</a
+          >
+        </div>
+        <div class="flex">
+          <a
+            class="button2 block m-1"
+            @click="showMusicList = true"
+            title="Save"
+            >Load</a
+          >
+
+          <a class="button2 block m-1" @click="print()" title="Apagar cifra"
+            >Print</a
+          >
+        </div>
+        <div class="flex">
+          <a
+            class="button2 block m-1"
+            @click="router.push('/multichords')"
+            title="MultiChords"
+          >
+            MultiChords
+          </a>
+
+          <a class="button2 block m-1" @click="hide = true" title="Apagar cifra"
+            >Hide</a
+          >
+        </div>
+      </div>
+      <ul v-else class="w-[300px] h-[250px] overflow-y-scroll">
         <li
           v-for="(item, index) in chordList"
           :key="index"
-          @click="loadMusic(item)"
-          class="p-2 w-[95%] bg-white/75 drop-shadow mb-2 cursor-pointer hover:bg-white"
+          @click="loadMusic(item), closeModal()"
+          class="p-2 w-[95%] bg-zinc-300 drop-shadow border-b border-zinc-400 cursor-pointer hover:bg-zinc-200"
         >
           {{ item.name }}
         </li>
+        <img
+          src="../assets/arrow-left.png"
+          class="absolute top-5 left-4 w-6 bg-white rounded-full p-1 cursor-pointer"
+          alt="Back to menu"
+          @click="showMusicList = false"
+        />
       </ul>
+      <img
+        src="../assets/close.png"
+        class="absolute top-5 right-4 w-6 bg-white rounded-full p-1 cursor-pointer"
+        alt="Back to menu"
+        @click="closeModal()"
+      />
     </div>
   </div>
 
@@ -517,13 +614,13 @@ function tamanhoDaFonte(linha) {
 
       <button @click="cifra.push([])" title="Pular linha">↲</button>
 
-      <button @click="backspace()" title="Apagar acorde">←</button>
+      <button @click="backspace()" title="Apagar acorde">⭠</button>
 
       <button @click="reset()" title="Apagar cifra">X</button>
-      <button @click="saveOnline()" title="Save">Save</button>
-      <button @click="loadOnline()" title="Apagar cifra">Load</button>
-      <button @click="print()" title="Apagar cifra">Print</button>
-      <button @click="hide = true" title="Apagar cifra">Hide</button>
+
+      <button @click="showModal()" title="Apagar cifra">
+        <img src="../assets/menu.png" alt="" class="w-7" />
+      </button>
 
       <form enctype="multipart/form-data">
         <input
@@ -563,13 +660,11 @@ function tamanhoDaFonte(linha) {
           >
         </button>
       </div>
-      <button @click="router.push('/multichords')" title="MultiChords">
-        MultiChords
-      </button>
     </div>
   </div>
 
   <!--AREA DE EXIBIÇÃO-->
+
   <div
     :class="[eraseArea ? 'bg-red-100' : 'bg-zinc-200', hide ? 'h-0' : 'h-16']"
     id="eraseTop"
@@ -577,7 +672,7 @@ function tamanhoDaFonte(linha) {
     @dragenter.prevent
     @dragleave="eraseArea = false"
     @drop="eraseChordByDrop()"
-    class="fixed top-0 w-full flex justify-center items-center duration-100 overflow-hidden"
+    class="fixed top-0 w-full flex justify-center items-center duration-100 overflow-hidden z-10"
   >
     <img
       src="../assets/trash.png"
@@ -594,7 +689,8 @@ function tamanhoDaFonte(linha) {
     :class="[hide ? '-mt-16' : 'mt-0']"
   >
     <input
-      class="text-xl lg:text-3xl my-5 ml-5 font-bold border-0 drop-shadow-none bg-transparent"
+      class="text-xl lg:text-3xl my-5 ml-10 border-0 p-0 font-bold drop-shadow-none bg-transparent"
+      :style="'width:' + (musicName.length + 2) + 'ch'"
       v-model="musicName"
     />
     <div
@@ -645,6 +741,12 @@ function tamanhoDaFonte(linha) {
           ></span>
         </div>
       </div>
+      <img
+        v-if="indexLinha + 1 == cifra.length"
+        src="../assets/insertion.gif"
+        class="w-1 inline"
+        alt=""
+      />
     </div>
   </div>
 

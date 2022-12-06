@@ -9,6 +9,7 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   sendEmailVerification,
+  sendPasswordResetEmail,
 } from 'firebase/auth'
 
 const router = useRouter()
@@ -61,6 +62,20 @@ function login() {
     })
 }
 
+function resetPass() {
+  let person = prompt('Insira seu email', '')
+
+  if (person.length > 4) {
+    sendPasswordResetEmail(auth, person)
+      .then(() => {
+        alert('Enviamos um link de redefinição para esse Email!')
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  }
+}
+
 // function handleFacebookLogin() {
 //   signInWithRedirect(auth, providerFacebook)
 // }
@@ -86,10 +101,8 @@ function handleGoogleLogin() {
       @keyup.enter="login()"
     />
     <div class="flex justify-between text-xs my-2 font-bold">
-      <a href="" @click="router.push({ name: 'siginup' })">Criar nova conta</a>
-      <a href="" @click="router.push({ name: 'resetpass' })"
-        >Esqueceu a senha?</a
-      >
+      <a @click="router.push({ name: 'siginup' })">Criar nova conta</a>
+      <a @click="resetPass()">Esqueceu a senha?</a>
     </div>
     <a class="button2" @click="login()">Entrar</a>
 

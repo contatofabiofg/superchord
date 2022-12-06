@@ -9,11 +9,11 @@
   padding: 0;
   box-sizing: border-box;
   user-select: none;
-  touch-action: none;
+
 }
 
 body {
-  overflow: auto
+  overscroll-behavior: contain;
 }
 
 html {
@@ -21,6 +21,7 @@ html {
   bg-gradient-to-r 
   from-zinc-500 
   to-zinc-400
+
 }
 
 input {

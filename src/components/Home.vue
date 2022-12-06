@@ -1,8 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { jsPDF } from 'jspdf'
-import { polyfill } from 'mobile-drag-drop'
-import { scrollBehaviourDragImageTranslateOverride } from 'mobile-drag-drop/scroll-behaviour'
+
 import {
   createChord,
   getAllChords,
@@ -19,12 +18,6 @@ const router = useRouter()
 watch(keyFire, () => {
   getChords()
 })
-
-polyfill({
-  dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
-})
-
-window.addEventListener('touchmove', function () {}, { passive: false })
 
 const tune = ref('C')
 const chord = ref([])

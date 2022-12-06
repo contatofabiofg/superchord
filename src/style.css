@@ -12,6 +12,10 @@
   touch-action: none;
 }
 
+body {
+  overflow: auto
+}
+
 html {
   @apply
   bg-gradient-to-r 

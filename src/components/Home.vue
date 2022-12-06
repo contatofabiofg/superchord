@@ -21,9 +21,10 @@ watch(keyFire, () => {
 })
 
 polyfill({
-  holdToDrag: 300,
   dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
 })
+
+window.addEventListener('touchmove', function () {}, { passive: false })
 
 const tune = ref('C')
 const chord = ref([])

@@ -13,6 +13,7 @@ const chordList = ref([])
 const pressModel = ref(true)
 const zoom = ref({})
 const mobileView = ref(true)
+const menuOpen = ref(true)
 
 onMounted(() => {
   getChords()
@@ -23,13 +24,13 @@ onMounted(() => {
 
 async function getChords() {
   let response = await getAllChords()
-  console.log(response)
+  chordList.value = []
   response.forEach((element) => {
-    let cifraJSON = JSON.parse(element.data().cifra)
+    let chordJSON = JSON.parse(element.data().chord)
     let obj = {
       name: element.data().name,
-      cifra: cifraJSON,
-      tom: element.data().tom,
+      chord: chordJSON,
+      tune: element.data().tune,
     }
     chordList.value.push(obj)
   })
@@ -79,19 +80,19 @@ function downloadFile(filename, text) {
 }
 
 function download() {
-  let json = [tom.value]
-  json.push(JSON.stringify(cifra.value))
+  let json = [tune.value]
+  json.push(JSON.stringify(chord.value))
   if (musicName.value.length > 0) {
     json.push(musicName.value)
   }
 
-  downloadFile(musicName.value || 'cifra', JSON.stringify(json))
+  downloadFile(musicName.value || 'chord', JSON.stringify(json))
 }
 */
 
-function listaDeAcordes(tom) {
+function listaDeAcordes(tune) {
   let obj
-  switch (tom) {
+  switch (tune) {
     case 'G':
       obj = {
         I: 'G',
@@ -210,23 +211,41 @@ function listaDeAcordes(tom) {
 </script>
 
 <template>
-  <div v-if="!mobileView">
+  <div>
     <a @click="print()">
       <img
         src="../assets/printer.png"
-        class="fixed top-3 right-3 w-12 p-2 rounded-full bg-white drop-shadow-lg cursor-pointer"
+        class="fixed top-3 right-3 w-12 p-2 rounded-full bg-white drop-shadow-lg cursor-pointer z-10"
         alt=""
       />
     </a>
 
     <!-- Sidebar -->
+
     <div
-      class="fixed w-[300px] top-0 bottom-0 bg-gradient-to-r from-zinc-800 to-zinc-700 drop-shadow-2xl p-3 overflow-hidden"
+      class="fixed w-full lg:w-[300px] lg:h-auto lg:top-0 bottom-0 bg-gradient-to-r from-zinc-800 to-zinc-700 drop-shadow-2xl p-3 overflow-hidden z-10 duration-100"
+      :class="[menuOpen ? 'h-[30%]' : 'h-[8%]']"
     >
-      <h1 @click="getChords()" class="text-xl text-white font-bold mb-4">
-        Suas Cifras
-      </h1>
-      <ul class="h-[90vh] w-[115%] overflow-y-scroll">
+      <div class="flex justify-between mx-2">
+        <h1 @click="getChords()" class="text-xl text-white font-bold mb-4">
+          Suas Cifras
+        </h1>
+        <div class="flex" v-if="mobileView">
+          <img
+            src="../assets/undo.png"
+            alt="Down button"
+            class="w-5 h-5 invert mr-4"
+            @click="multiChord.pop()"
+          />
+          <img
+            src="../assets/down.png"
+            alt="Down button"
+            class="w-4 h-5 invert"
+            @click="menuOpen = !menuOpen"
+          />
+        </div>
+      </div>
+      <ul class="h-[150px] lg:h-[90vh] w-[115%] overflow-y-scroll">
         <li
           v-for="(item, index) in chordList"
           :key="index"
@@ -241,7 +260,7 @@ function listaDeAcordes(tom) {
     <!-- Área de exibição -->
 
     <div
-      class="p-3 w-[580px] h-[900px] ml-[500px] mb-10 bg-white mt-5 drop-shadow-lg"
+      class="p-3 w-[90vw] lg:w-[580px] h-[900px] lg:ml-[500px] mb-20 lg:mb-10 bg-white mt-5 drop-shadow-lg m-auto"
     >
       <div class="w-full h-full flex flex-col flex-wrap">
         <div
@@ -250,26 +269,26 @@ function listaDeAcordes(tom) {
           :key="index"
         >
           <div
-            class="text-xl px-2 absolute top-0 left-0 border border-slate-400"
+            class="text-xs lg:text-xl px-2 absolute top-0 left-0 border border-slate-400"
           >
             {{ item.name }}
             <img
               v-if="!zoom[index]"
               src="../assets/zoomin.png"
-              class="w-5 absolute top-1 -right-7 cursor-pointer"
+              class="w-3 lg:w-5 absolute top-1 -right-4 lg:-right-7 cursor-pointer"
               alt=""
               @click="zoom[index] = true"
             />
             <img
               v-else
               src="../assets/zoomout.png"
-              class="w-5 absolute top-1 -right-7 cursor-pointer"
+              class="w-3 lg:w-5 absolute top-1 -right-4 lg:-right-7 cursor-pointer"
               alt=""
               @click="zoom[index] = false"
             />
           </div>
           <div
-            class="text-xl px-2 absolute top-0 right-0 border border-slate-400 cursor-pointer"
+            class="text-sm lg:text-xl px-1 lg:px-2 absolute top-0 right-0 border border-slate-400 cursor-pointer"
             @click="deleteChord(index)"
           >
             X
@@ -277,22 +296,24 @@ function listaDeAcordes(tom) {
 
           <div class="mt-8">
             <div
-              v-for="(linha, indexLinha) in item.cifra"
+              v-for="(linha, indexLinha) in item.chord"
               :key="indexLinha"
               class="h-10 lg:h-10 flex items-center font-bold"
             >
               <div v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
                 <div
                   class="flex"
-                  :class="[zoom[index] ? 'text-lg' : 'text-sm']"
+                  :class="[
+                    zoom[index] ? 'text-md lg:text-lg' : 'text-xs lg:text-sm',
+                  ]"
                 >
                   <span class="w-1 lg:w-2 h-16"></span>
 
                   <span
-                    >{{ listaDeAcordes(item.tom)[acorde.grade]
+                    >{{ listaDeAcordes(item.tune)[acorde.grade]
                     }}<span>{{ acorde.variation }}</span>
                     <span v-if="acorde.bass"
-                      >/{{ listaDeAcordes(item.tom)[acorde.bass] }}</span
+                      >/{{ listaDeAcordes(item.tune)[acorde.bass] }}</span
                     >
                   </span>
                 </div>
@@ -325,7 +346,7 @@ function listaDeAcordes(tom) {
 
             <div class="mt-8">
               <div
-                v-for="(linha, indexLinha) in item.cifra"
+                v-for="(linha, indexLinha) in item.chord"
                 :key="indexLinha"
                 class="h-10 lg:h-10 flex items-center font-bold"
               >
@@ -337,10 +358,10 @@ function listaDeAcordes(tom) {
                     <span class="w-1 lg:w-3 h-16"></span>
 
                     <span
-                      >{{ listaDeAcordes(item.tom)[acorde.grade]
+                      >{{ listaDeAcordes(item.tune)[acorde.grade]
                       }}<span>{{ acorde.variation }}</span>
                       <span v-if="acorde.bass"
-                        >/{{ listaDeAcordes(item.tom)[acorde.bass] }}</span
+                        >/{{ listaDeAcordes(item.tune)[acorde.bass] }}</span
                       >
                     </span>
                   </div>
@@ -352,7 +373,6 @@ function listaDeAcordes(tom) {
       </div>
     </div>
   </div>
-  <div v-else>Por hora, acesse essa área de uma tela maior</div>
 </template>
 
 <style scoped></style>

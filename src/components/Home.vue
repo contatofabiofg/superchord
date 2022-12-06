@@ -611,7 +611,7 @@ function tamanhoDaFonte(linha) {
 
       <button @click="chord.push([])" title="Pular linha">↲</button>
 
-      <button @click="backspace()" title="Apagar acorde">⭠</button>
+      <button @click="backspace()" title="Apagar acorde">←</button>
 
       <button @click="reset()" title="Apagar chord">X</button>
 

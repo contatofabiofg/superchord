@@ -30,7 +30,9 @@ export const keyFire = ref(0)
 export const userCol = ref(null)
 
 async function getUser() {
-  userCol.value = auth.currentUser.email
+  if (auth.currentUser) {
+    userCol.value = auth.currentUser.email
+  }
 }
 
 onAuthStateChanged(auth, () => {
@@ -67,9 +69,11 @@ export async function updateChord(item) {
 export async function getAllChords() {
   let responseData
   await getUser()
-  await getDocs(collection(db, userCol.value)).then((response) => {
-    responseData = response
-  })
+  if (userCol.value) {
+    await getDocs(collection(db, userCol.value)).then((response) => {
+      responseData = response
+    })
+  }
 
   return responseData
 }

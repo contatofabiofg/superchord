@@ -47,17 +47,18 @@ onMounted(() => {
 async function getChords() {
   chordList.value = []
   let response = await getAllChords()
-  console.log(response)
-  response.forEach((element) => {
-    let chordJSON = JSON.parse(element.data().chord)
-    let obj = {
-      name: element.data().name,
-      chord: chordJSON,
-      tune: element.data().tune,
-      id: element.data().id,
-    }
-    chordList.value.push(obj)
-  })
+  if (response) {
+    response.forEach((element) => {
+      let chordJSON = JSON.parse(element.data().chord)
+      let obj = {
+        name: element.data().name,
+        chord: chordJSON,
+        tune: element.data().tune,
+        id: element.data().id,
+      }
+      chordList.value.push(obj)
+    })
+  }
 }
 
 function dragAddBackground(e) {
@@ -232,7 +233,7 @@ function eraseChordByDrop() {
 function reset() {
   if (chord.value.length > 0) {
     if (window.confirm('Quer apagar toda esta chord?')) {
-      while (chord.value[0].length > 0) {
+      while (chord.value.length > 0) {
         chord.value[0].forEach(() => chord.value.pop())
       }
     }
@@ -249,7 +250,7 @@ function newChord() {
       musicName.value = 'Nome da música'
       idChord.value = null
       closeModal()
-      while (chord.value[0].length > 0) {
+      while (chord.value.length > 0) {
         chord.value[0].forEach(() => chord.value.pop())
       }
     }
@@ -260,7 +261,6 @@ function backspace() {
   if (chord.value[chord.value.length - 1].length - 1 > 0) {
     chord.value[chord.value.length - 1].pop()
   } else {
-    console.log('apagou')
     chord.value.pop()
   }
 }

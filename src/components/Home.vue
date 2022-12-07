@@ -109,7 +109,7 @@ function print() {
 function logout() {
   auth.signOut()
 
-  router.push({ name: 'login' })
+  router.push({ name: 'Login' })
 }
 
 /*
@@ -549,7 +549,7 @@ function tamanhoDaFonte(linha) {
           v-for="(item, index) in chordList"
           :key="index"
           @click="loadMusic(item), closeModal()"
-          class="p-2 w-[95%] bg-zinc-300 drop-shadow border-b border-zinc-400 cursor-pointer hover:bg-zinc-200"
+          class="p-2 mb-1 w-[95%] bg-gradient-to-r from-zinc-200 to-white cursor-pointer hover:brightness-110"
         >
           {{ item.name }}
         </li>

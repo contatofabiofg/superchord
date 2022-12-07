@@ -25,7 +25,7 @@ onAuthStateChanged(auth, (user) => {
     // User is signed in, see docs for a list of available properties
     // https://firebase.google.com/docs/reference/js/firebase.User
     //const uid = user.uid;
-    router.push('/')
+    router.push({ name: 'Home' })
     // ...
   } else {
     loading.value = false
@@ -101,7 +101,7 @@ function handleGoogleLogin() {
       @keyup.enter="login()"
     />
     <div class="flex justify-between text-xs my-2 font-bold">
-      <a @click="router.push({ name: 'siginup' })">Criar nova conta</a>
+      <a @click="router.push({ name: 'Siginup' })">Criar nova conta</a>
       <a @click="resetPass()">Esqueceu a senha?</a>
     </div>
     <a class="button2" @click="login()">Entrar</a>

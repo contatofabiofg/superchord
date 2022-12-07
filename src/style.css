@@ -55,10 +55,9 @@ button {
   w-full 
   p-2 
   text-center 
-  bg-zinc-800 
-  text-white 
-  rounded-md 
-  hover:brightness-125 
+  bg-gradient-to-r from-zinc-300 to-zinc-200 
+  font-semibold
+  hover:brightness-110 
   duration-100 
   cursor-pointer
 }

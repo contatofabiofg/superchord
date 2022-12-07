@@ -10,7 +10,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: HomeView,
       meta: {
         authUsuario: true,
@@ -18,21 +18,21 @@ const router = createRouter({
     },
     {
       path: '/login',
-      name: 'login',
+      name: 'Login',
       component: Login,
     },
     {
       path: '/siginup',
-      name: 'siginup',
+      name: 'Siginup',
       component: SiginUp,
     },
     {
       path: '/multichords',
       name: 'MultiChords',
       component: MultiChords,
-      meta: {
-        authUsuario: true,
-      },
+      // meta: {
+      //   authUsuario: true,
+      // },
     },
   ],
 })
@@ -43,10 +43,7 @@ router.beforeEach((to, from, next) => {
 
     onAuthStateChanged(auth, () => {
       if (auth.currentUser) {
-        if (
-          auth.currentUser.emailVerified ||
-          auth.currentUser.providerData[0].providerId == 'facebook.com'
-        ) {
+        if (auth.currentUser.emailVerified) {
           next()
         } else {
           next('/login')

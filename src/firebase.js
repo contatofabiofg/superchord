@@ -32,6 +32,7 @@ export const userCol = ref(null)
 async function getUser() {
   if (auth.currentUser) {
     userCol.value = auth.currentUser.email
+    console.log(await auth.currentUser.getIdTokenResult())
   }
 }
 

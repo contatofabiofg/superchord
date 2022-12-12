@@ -33,6 +33,7 @@ const idChord = ref(null)
 const chordList = ref([])
 const modal = ref(false)
 const showMusicList = ref(false)
+const status = ref(null)
 
 onMounted(() => {
   getChords()
@@ -142,6 +143,8 @@ function download() {
 */
 
 function saveOnline() {
+  createChord()
+
   let json = [tune.value]
   json.push(JSON.stringify(chord.value))
   if (musicName.value.length > 0) {
@@ -156,11 +159,13 @@ function saveOnline() {
 
   if (idChord.value) {
     item.id = idChord.value
+    status.value = 'updated'
     updateChord(item).then(() => {
       closeModal()
     })
   } else {
     idChord.value = new Date().getTime().toString()
+    status.value = 'created'
     item.id = idChord.value
     createChord(item).then(() => {
       closeModal()

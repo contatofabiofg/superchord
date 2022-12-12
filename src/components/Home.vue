@@ -208,8 +208,13 @@ function handleFileLoad(event) {
 }
 
 function bassChordBydrop(line, position) {
-  chord.value[line][position].bass = chordToDrop.value.grade
+  if (chordToDrop.value.char.length > 0) {
+    chord.value[line][position].char = chordToDrop.value.char
+  } else {
+    chord.value[line][position].bass = chordToDrop.value.grade
+  }
 }
+
 function addChordBydrop(line, position, e) {
   if (chord.value[line].length < 6) {
     e.target.classList.remove('hover')
@@ -487,6 +492,13 @@ function tamanhoDaFonte(linha) {
   }
   return retorno
 }
+
+function inserirTexto(index) {
+  let text = prompt('Insira aqui o seu texto')
+  if (text.length > 2) {
+    chord.value.splice(index, 0, ['text', text])
+  }
+}
 </script>
 
 <template>
@@ -662,6 +674,12 @@ function tamanhoDaFonte(linha) {
           >
         </button>
       </div>
+      <button draggable="true" @dragstart="chordToDrop = { char: '(' }">
+        <span>(</span>
+      </button>
+      <button draggable="true" @dragstart="chordToDrop = { char: ')' }">
+        <span>)</span>
+      </button>
     </div>
   </div>
 
@@ -698,13 +716,25 @@ function tamanhoDaFonte(linha) {
     <div
       v-for="(linha, indexLinha) in chord"
       :key="indexLinha"
-      class="h-14 lg:h-24 flex items-center lg:text-4xl font-bold"
+      class="flex items-center font-bold"
       :class="[
         zoom ? ' transform scale-[135%]' : 'transform scale-[100%]',
         tamanhoDaFonte(linha),
+        linha[0] == 'text'
+          ? 'h-10 lg:h-10 lg:text-lg'
+          : 'h-14 lg:h-24 lg:text-4xl',
       ]"
     >
-      <div v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
+      <span
+        v-if="linha[0] != 'text'"
+        @click="inserirTexto(indexLinha)"
+        class="opacity-50 cursor-pointer"
+        >+</span
+      >
+      <div v-if="linha[0] == 'text'">
+        <span @click="chord.splice(indexLinha, 1)">{{ linha[1] }}</span>
+      </div>
+      <div v-else v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
         <div class="flex items-center duration-100">
           <span
             class="w-1 lg:w-4 h-16 duration-100"
@@ -725,6 +755,7 @@ function tamanhoDaFonte(linha) {
             @drop="bassChordBydrop(indexLinha, indexAcorde)"
             @click="mutateChord(indexLinha, indexAcorde)"
           >
+            <span v-if="acorde.char == '('">(</span>
             <span
               >{{ listaDeAcordes()[acorde.grade]
               }}<span>{{ acorde.variation }}</span>
@@ -732,6 +763,7 @@ function tamanhoDaFonte(linha) {
                 >/{{ listaDeAcordes()[acorde.bass] }}</span
               >
             </span>
+            <span v-if="acorde.char == ')'">)</span>
           </span>
 
           <span

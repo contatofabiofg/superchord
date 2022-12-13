@@ -215,7 +215,7 @@ function handleFileLoad(event) {
 }
 
 function bassChordBydrop(line, position) {
-  if (chordToDrop.value.char.length > 0) {
+  if (chordToDrop.value.char) {
     chord.value[line][position].char = chordToDrop.value.char
   } else {
     chord.value[line][position].bass = chordToDrop.value.grade

@@ -738,7 +738,7 @@ function inserirTexto(index) {
         class="opacity-50 cursor-pointer"
         >+</span
       >
-      <div v-if="linha[0] == 'text'">
+      <div v-if="linha[0] == 'text'" class="text-xl lg:text-3xl">
         <span @click="chord.splice(indexLinha, 1)">{{ linha[1] }}</span>
       </div>
       <div v-else v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">

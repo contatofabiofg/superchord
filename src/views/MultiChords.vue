@@ -312,7 +312,7 @@ function listaDeAcordes(tune) {
           >
             <div
               v-if="linha[0] == 'text'"
-              class="h-full text-center -mt-10 -ml-2"
+              class="h-full text-center text-[10px] lg:text-lg -mt-12 lg:-ml-2"
             >
               <span @click="chord.splice(indexLinha, 1)">{{ linha[1] }}</span>
             </div>

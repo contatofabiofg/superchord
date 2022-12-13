@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { jsPDF } from 'jspdf'
+import { polyfill } from 'mobile-drag-drop'
+import { scrollBehaviourDragImageTranslateOverride } from 'mobile-drag-drop/scroll-behaviour'
 
 import {
   createChord,
@@ -11,6 +13,11 @@ import {
 } from '../firebase'
 import { useRouter } from 'vue-router'
 import { getAuth } from 'firebase/auth'
+
+polyfill({
+  // use this to make use of the scroll behaviour
+  dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
+})
 
 const auth = getAuth()
 const router = useRouter()

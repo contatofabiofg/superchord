@@ -307,9 +307,21 @@ function listaDeAcordes(tune) {
           <div
             v-for="(linha, indexLinha) in item.chord"
             :key="indexLinha"
-            class="h-6 lg:h-10 flex items-center font-bold"
+            class="flex items-center"
+            :class="[linha[0] == 'text' ? 'h-3 lg:h-5' : 'h-6 lg:h-10 ']"
           >
-            <div v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
+            <div
+              v-if="linha[0] == 'text'"
+              class="h-full text-center -mt-10 -ml-2"
+            >
+              <span @click="chord.splice(indexLinha, 1)">{{ linha[1] }}</span>
+            </div>
+            <div
+              v-else
+              v-for="(acorde, indexAcorde) in linha"
+              :key="indexAcorde"
+              class="font-bold"
+            >
               <div
                 class="flex"
                 :class="[
@@ -319,13 +331,14 @@ function listaDeAcordes(tune) {
                 ]"
               >
                 <span class="w-0.5 lg:w-2 h-16"></span>
-
+                <span v-if="acorde.char == '('">(</span>
                 <span
                   >{{ listaDeAcordes(item.tune)[acorde.grade]
                   }}<span>{{ acorde.variation }}</span>
                   <span v-if="acorde.bass"
                     >/{{ listaDeAcordes(item.tune)[acorde.bass] }}</span
                   >
+                  <span v-if="acorde.char == ')'">)</span>
                 </span>
               </div>
             </div>
@@ -359,21 +372,29 @@ function listaDeAcordes(tune) {
             <div
               v-for="(linha, indexLinha) in item.chord"
               :key="indexLinha"
-              class="h-10 flex items-center font-bold"
+              class="flex items-center"
+              :class="[linha[0] == 'text' ? 'h-5' : 'h-10 ']"
             >
+              <div
+                v-if="linha[0] == 'text'"
+                class="h-full text-center -mt-10 -ml-2"
+              >
+                <span @click="chord.splice(indexLinha, 1)">{{ linha[1] }}</span>
+              </div>
               <div v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
                 <div
-                  class="flex"
+                  class="flex font-bold"
                   :class="[zoom[index] ? 'text-xl' : 'text-md']"
                 >
                   <span class="w-1 lg:w-3 h-16"></span>
-
+                  <span v-if="acorde.char == '('">(</span>
                   <span
                     >{{ listaDeAcordes(item.tune)[acorde.grade]
                     }}<span>{{ acorde.variation }}</span>
                     <span v-if="acorde.bass"
                       >/{{ listaDeAcordes(item.tune)[acorde.bass] }}</span
                     >
+                    <span v-if="acorde.char == ')'">)</span>
                   </span>
                 </div>
               </div>

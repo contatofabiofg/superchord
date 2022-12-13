@@ -721,7 +721,7 @@ function inserirTexto(index) {
         zoom ? ' transform scale-[135%]' : 'transform scale-[100%]',
         tamanhoDaFonte(linha),
         linha[0] == 'text'
-          ? 'h-10 lg:h-10 lg:text-lg'
+          ? 'h-10 lg:h-10 lg:text-xl'
           : 'h-14 lg:h-24 lg:text-4xl',
       ]"
     >
@@ -796,9 +796,17 @@ function inserirTexto(index) {
       <div
         v-for="(linha, indexLinha) in chord"
         :key="indexLinha"
-        class="h-24 flex items-center text-4xl font-bold"
+        class="flex items-center font-bold"
+        :class="[
+          zoom ? ' transform scale-[135%]' : 'transform scale-[100%]',
+          tamanhoDaFonte(linha),
+          linha[0] == 'text' ? 'h-14 text-2xl' : 'h-24 text-4xl',
+        ]"
       >
-        <div v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
+        <div v-if="linha[0] == 'text'">
+          <span @click="chord.splice(indexLinha, 1)">{{ linha[1] }}</span>
+        </div>
+        <div v-else v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
           <div class="flex items-center duration-100">
             <span
               draggable="true"
@@ -811,12 +819,14 @@ function inserirTexto(index) {
               @drop="bassChordBydrop(indexLinha, indexAcorde)"
               @click="mutateChord(indexLinha, indexAcorde)"
             >
+              <span v-if="acorde.char == '('">(</span>
               <span
                 >{{ listaDeAcordes()[acorde.grade]
                 }}<span>{{ acorde.variation }}</span>
                 <span v-if="acorde.bass"
                   >/{{ listaDeAcordes()[acorde.bass] }}</span
                 >
+                <span v-if="acorde.char == ')'">)</span>
               </span>
             </span>
           </div>

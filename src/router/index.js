@@ -12,9 +12,9 @@ const router = createRouter({
       path: '/',
       name: 'Home',
       component: HomeView,
-      meta: {
-        authUsuario: true,
-      },
+      // meta: {
+      //   authUsuario: true,
+      // },
     },
     {
       path: '/login',

@@ -528,8 +528,9 @@ function inserirTexto(index) {
     >
       <img src="../assets/superchord.png" class="w-40 m-auto my-2" alt="" />
       <p class="text-center text-sm">Você está logado como:</p>
-      <p class="text-center text-sm italic mb-4">{{ userCol || 'Convidado - Funcionalidades limitadas' }}</p>
-      
+      <p class="text-center text-sm italic mb-4">
+        {{ userCol || 'Convidado - Funcionalidades limitadas' }}
+      </p>
 
       <div v-if="!showMusicList">
         <div class="flex">

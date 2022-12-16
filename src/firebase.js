@@ -51,7 +51,9 @@ export async function createChord(item) {
       keyFire.value++
     })
   } catch (e) {
-    alert('Houve algum problema pra salvar sua cifra. Como a autenticação está em aberto, você pode não estar logado!')
+    alert(
+      'Houve algum problema pra salvar sua cifra. Como a autenticação está em aberto, você pode não estar logado!'
+    )
   }
 }
 
@@ -63,7 +65,9 @@ export async function updateChord(item) {
       keyFire.value++
     })
   } catch (e) {
-    alert('Houve algum problema pra salvar sua cifra. Como a autenticação está em aberto, você pode não estar logado!')
+    alert(
+      'Houve algum problema pra salvar sua cifra. Como a autenticação está em aberto, você pode não estar logado!'
+    )
   }
 }
 

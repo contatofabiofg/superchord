@@ -34,20 +34,66 @@ input {
   rounded-md
 }
 
-button {
+h2 {
   @apply
-  p-3 
+  text-[20px]
+ 
+}
+
+.button {
+  @apply
   border 
-  border-zinc-700 
-  rounded 
-  lg:m-2 
+  border-zinc-400 
+  w-[14vw]
+  h-12
+  lg:w-[50px]
+  lg:m-1
   select-none 
   bg-gradient-to-r 
   from-zinc-400 
-  to-zinc-300
+  to-zinc-200
   font-bold
   duration-100
   hover:brightness-110
+}
+
+.buttonbig {
+  @apply
+  whitespace-nowrap
+  border 
+  border-zinc-400 
+  text-[20px]
+  h-12
+  w-[28vw]
+  lg:w-[100px]
+  lg:m-1
+  select-none 
+  bg-gradient-to-r 
+  from-zinc-400 
+  to-zinc-200
+  font-bold
+  duration-100
+  hover:brightness-110
+}
+
+.buttonTune {
+@apply
+w-full
+text-center
+border-2
+border-black
+my-1
+font-bold
+transition
+hover:text-white
+hover:bg-black
+}
+
+.dissonant {
+  @apply
+  bg-gradient-to-r 
+  from-orange-300 
+  to-orange-100
 }
 
 .button2 {

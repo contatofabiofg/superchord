@@ -39,8 +39,10 @@ const hide = ref(false)
 const idChord = ref(null)
 const chordList = ref([])
 const modal = ref(false)
+const modalTunes = ref(false)
 const showMusicList = ref(false)
 const status = ref(null)
+const tunes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 
 onMounted(() => {
   getChords()
@@ -182,6 +184,11 @@ function saveOnline() {
 
 function showModal() {
   modal.value = true
+  document.querySelector('body').style.overflow = 'hidden'
+}
+
+function showModalTunes() {
+  modalTunes.value = true
   document.querySelector('body').style.overflow = 'hidden'
 }
 
@@ -463,7 +470,7 @@ function listaDeAcordes() {
         IV: 'Bb',
         V: 'C',
         VI: 'D',
-        VII: 'Eº',
+        VII: 'E',
         Ia: 'F#',
         IIIm: 'G',
         IVa: 'B',
@@ -517,113 +524,115 @@ function inserirTexto(index) {
     />
   </a>
 
-  <!--MODAL-->
-
-  <div
-    v-if="modal"
-    class="fixed top-0 left-0 right-0 bottom-0 z-20 w-screen h-screen bg-black/50 overflow-hidden flex justify-center items-center"
+  <!--MODAL MENU-->
+  <transition
+    appear
+    enter-active-class="duration-300 ease-out"
+    enter-from-class="transform  opacity-0"
+    enter-to-class="opacity-100 "
+    leave-active-class="duration-200 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="transform opacity-0"
   >
     <div
-      class="relative bg-white p-3 w-[300px] h-fit overflow-hidden drop-shadow-lg rounded-md"
+      v-if="modal"
+      class="fixed top-0 left-0 right-0 bottom-0 z-20 w-screen h-screen bg-black/50 overflow-hidden flex justify-center items-center"
     >
-      <img src="../assets/superchord.png" class="w-40 m-auto my-2" alt="" />
-      <p class="text-center text-sm">Você está logado como:</p>
-      <p class="text-center text-sm italic mb-4">
-        {{ userCol || 'Convidado - Funcionalidades limitadas' }}
-      </p>
-
-      <div v-if="!showMusicList">
-        <div class="flex">
-          <a class="button2 block m-1" @click="newChord()" title="New Chord"
-            >New</a
-          >
-          <a class="button2 block m-1" @click="saveOnline()" title="Save"
-            >Save</a
-          >
-        </div>
-        <div class="flex">
-          <a
-            class="button2 block m-1"
-            @click="showMusicList = true"
-            title="Save"
-            >Load</a
-          >
-
-          <a class="button2 block m-1" @click="print()" title="Apagar chord"
-            >Print</a
-          >
-        </div>
-        <div class="flex">
-          <a
-            class="button2 block m-1"
-            @click="router.push('/multichords')"
-            title="MultiChords"
-          >
-            MultiChords
-          </a>
-
-          <a
-            class="button2 block m-1"
-            @click=";(hide = true), closeModal()"
-            title="Apagar chord"
-            >Hide</a
-          >
-        </div>
-      </div>
-      <ul v-else class="w-[300px] h-[250px] overflow-y-scroll">
-        <li
-          v-for="(item, index) in chordList"
-          :key="index"
-          @click="loadMusic(item), closeModal()"
-          class="p-2 mb-1 w-[95%] bg-gradient-to-r from-zinc-200 to-white cursor-pointer hover:brightness-110"
+      <transition
+        appear
+        enter-active-class="duration-300 ease-out"
+        enter-from-class="transform -translate-x-1/4 opacity-0"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="duration-200 ease-out"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="transform -translate-x-1/4 opacity-0"
+      >
+        <div
+          class="relative bg-white p-3 w-[300px] h-fit overflow-hidden drop-shadow-lg rounded-md"
         >
-          {{ item.name }}
-        </li>
-        <img
-          src="../assets/arrow-left.png"
-          class="absolute top-5 left-4 w-6 bg-white rounded-full p-1 cursor-pointer"
-          alt="Back to menu"
-          @click="showMusicList = false"
-        />
-      </ul>
-      <img
-        src="../assets/close.png"
-        class="absolute top-5 right-4 w-6 bg-white rounded-full p-1 cursor-pointer"
-        alt="Back to menu"
-        @click="closeModal()"
-      />
+          <img src="../assets/superchord.png" class="w-40 m-auto my-2" alt="" />
+          <p class="text-center text-sm">Você está logado como:</p>
+          <p class="text-center text-sm italic mb-4">
+            {{ userCol || 'Convidado - Funcionalidades limitadas' }}
+          </p>
+
+          <div v-if="!showMusicList">
+            <div class="flex">
+              <a class="button2 block m-1" @click="newChord()" title="New Chord"
+                >New</a
+              >
+              <a class="button2 block m-1" @click="saveOnline()" title="Save"
+                >Save</a
+              >
+            </div>
+            <div class="flex">
+              <a
+                class="button2 block m-1"
+                @click="showMusicList = true"
+                title="Save"
+                >Load</a
+              >
+
+              <a class="button2 block m-1" @click="print()" title="Apagar chord"
+                >Print</a
+              >
+            </div>
+            <div class="flex">
+              <a
+                class="button2 block m-1"
+                @click="router.push('/multichords')"
+                title="MultiChords"
+              >
+                MultiChords
+              </a>
+
+              <a
+                class="button2 block m-1"
+                @click=";(hide = true), closeModal()"
+                title="Apagar chord"
+                >Hide</a
+              >
+            </div>
+          </div>
+          <ul v-else class="w-[300px] h-[250px] overflow-y-scroll">
+            <li
+              v-for="(item, index) in chordList"
+              :key="index"
+              @click="loadMusic(item), closeModal()"
+              class="p-2 mb-1 w-[95%] bg-gradient-to-r from-zinc-200 to-white cursor-pointer hover:brightness-110"
+            >
+              {{ item.name }}
+            </li>
+            <img
+              src="../assets/arrow-left.png"
+              class="absolute top-5 left-4 w-6 bg-white rounded-full p-1 cursor-pointer"
+              alt="Back to menu"
+              @click="showMusicList = false"
+            />
+          </ul>
+          <img
+            src="../assets/close.png"
+            class="absolute top-5 right-4 w-6 bg-white rounded-full p-1 cursor-pointer"
+            alt="Back to menu"
+            @click="closeModal()"
+          />
+        </div>
+      </transition>
     </div>
-  </div>
+  </transition>
 
   <!--TONE PICKER-->
   <div
-    class="z-10 w-full flex-col justify-center py-3 fixed bottom-0 shadow-[0_25px_60px_-15px_rgba(0,0,0,1)] bg-gradient-to-r from-zinc-800 to-zinc-700"
+    class="z-10 w-full flex-col lg:justify-center lg:py-3 fixed bottom-0 shadow-[0_25px_60px_-15px_rgba(0,0,0,1)] bg-gradient-to-r from-zinc-800 to-zinc-700"
     :class="[hide ? 'h-0' : '']"
   >
     <div
       v-if="!hide"
-      class="flex flex-wrap text-xl justify-center lg:items-center"
+      class="flex flex-wrap text-xl lg:justify-center lg:items-center"
     >
-      <div class="flex flex-col -mt-2 mr-2 lg:mr-10">
-        <label for="tom" class="text-white">Escolha o tom</label>
-        <select
-          name="tom"
-          id="tom"
-          class="border border-slate-300"
-          v-model="tune"
-        >
-          <option value="C" selected>C</option>
-          <option value="D">D</option>
-          <option value="E">E</option>
-          <option value="F">F</option>
-          <option value="G">G</option>
-          <option value="A">A</option>
-          <option value="B">B</option>
-        </select>
-      </div>
-
       <div v-for="(item, index) in intervals" :key="index">
         <button
+          class="button"
           draggable="true"
           @dragstart="chordToDrop = item"
           @click="addChord(item.grade, item.variation)"
@@ -635,14 +644,54 @@ function inserirTexto(index) {
         </button>
       </div>
 
-      <button @click="chord.push([])" title="Pular linha">↲</button>
+      <div v-for="(item, index) in dissonants" :key="index">
+        <button
+          class="button dissonant"
+          draggable="true"
+          @dragstart="chordToDrop = item"
+          @click="addChord(item.grade, item.variation)"
+        >
+          <span
+            >{{ listaDeAcordes()[item.grade]
+            }}<span>{{ item.variation }}</span></span
+          >
+        </button>
+      </div>
+      <button
+        class="button"
+        draggable="true"
+        @dragstart="chordToDrop = { char: '(' }"
+      >
+        <span>(</span>
+      </button>
+      <button
+        class="button"
+        draggable="true"
+        @dragstart="chordToDrop = { char: ')' }"
+      >
+        <span>)</span>
+      </button>
 
-      <button @click="backspace()" title="Apagar acorde">←</button>
+      <button class="buttonbig" @click="showModalTunes()">
+        Tune: {{ tune }}
+      </button>
 
-      <button @click="reset()" title="Apagar chord">X</button>
+      <button class="button" @click="chord.push([])" title="Pular linha">
+        ↲
+      </button>
 
-      <button @click="showModal()" title="Apagar chord">
-        <img src="../assets/menu.png" alt="" class="w-7" />
+      <button class="button" @click="backspace()" title="Apagar acorde">
+        ←
+      </button>
+
+      <button class="button" @click="reset()" title="Apagar chord">X</button>
+
+      <button class="button" @click="showModal()" title="Menu">
+        <img src="../assets/menu.png" alt="" class="w-7 m-auto" />
+      </button>
+
+      <button class="button" title="fire">
+        <img src="../assets/fire.png" alt="" class="w-7 m-auto" />
       </button>
 
       <form enctype="multipart/form-data">
@@ -654,43 +703,63 @@ function inserirTexto(index) {
         />
       </form>
     </div>
+
     <div
       class="absolute z-10 right-8 -top-10 w-5 h-10 cursor-pointer text-3xl"
-      @click=";[(submenu = !submenu), (hide = false)]"
-    >
-      <img src="../assets/down.png" alt="Down button" class="w-5" />
-    </div>
-    <div
-      class="absolute z-10 right-8 -top-20 w-5 h-10 cursor-pointer text-3xl"
       @click="zoom = !zoom"
     >
       <img v-if="!zoom" src="../assets/zoomin.png" alt="zoom in" class="w-5" />
       <img v-else src="../assets/zoomout.png" alt="zoom out" class="w-5" />
     </div>
-    <div
-      :class="[submenu ? 'h-18 p-2' : 'h-0']"
-      class="w-full overflow-hidden duration-100 flex justify-center flex-wrap"
-    >
-      <div v-for="(item, index) in dissonants" :key="index">
-        <button
-          draggable="true"
-          @dragstart="chordToDrop = item"
-          @click="addChord(item.grade, item.variation)"
-        >
-          <span
-            >{{ listaDeAcordes()[item.grade]
-            }}<span>{{ item.variation }}</span></span
-          >
-        </button>
-      </div>
-      <button draggable="true" @dragstart="chordToDrop = { char: '(' }">
-        <span>(</span>
-      </button>
-      <button draggable="true" @dragstart="chordToDrop = { char: ')' }">
-        <span>)</span>
-      </button>
-    </div>
   </div>
+
+  <!--MODAL TOM-->
+  <transition
+    appear
+    enter-active-class="duration-300 ease-out"
+    enter-from-class="transform  opacity-0"
+    enter-to-class="opacity-100 "
+    leave-active-class="duration-200 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="transform opacity-0"
+  >
+    <div
+      v-if="modalTunes"
+      class="fixed top-0 left-0 right-0 bottom-0 z-20 w-screen h-screen bg-black/50 overflow-hidden flex justify-center items-center"
+    >
+      <transition
+        appear
+        enter-active-class="duration-300 ease-out"
+        enter-from-class="transform -translate-x-1/4 opacity-0"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="duration-200 ease-out"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="transform -translate-x-1/4 opacity-0"
+      >
+        <div
+          class="relative flex flex-col items-center bg-white p-3 w-[300px] h-fit overflow-hidden drop-shadow-lg rounded-md"
+        >
+          <h2 class="mb-3">Escolha o Tom</h2>
+
+          <div v-for="t in tunes" :key="t" class="w-full">
+            <button
+              class="buttonTune"
+              :class="tune == t ? 'bg-orange-400' : ''"
+              @click="
+                () => {
+                  tune = t
+                  modalTunes = false
+                }
+              "
+              :title="t"
+            >
+              {{ t.toUpperCase() }}
+            </button>
+          </div>
+        </div>
+      </transition>
+    </div>
+  </transition>
 
   <!--AREA DE EXIBIÇÃO-->
 

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
+import { tunes, intervals, dissonants, listaDeAcordes } from '../data/utils.js'
 import { jsPDF } from 'jspdf'
 import { polyfill } from 'mobile-drag-drop'
 import { scrollBehaviourDragImageTranslateOverride } from 'mobile-drag-drop/scroll-behaviour'
@@ -31,7 +32,6 @@ const chord = ref([])
 const chordToDrop = ref('')
 const chordToErase = ref(null)
 const musicName = ref('Nome da Música')
-const submenu = ref(false)
 const eraseArea = ref(false)
 const pressModel = ref(true)
 const zoom = ref(false)
@@ -42,7 +42,6 @@ const modal = ref(false)
 const modalTunes = ref(false)
 const showMusicList = ref(false)
 const status = ref(null)
-const tunes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 
 onMounted(() => {
   getChords()
@@ -108,10 +107,10 @@ function print() {
       // Save the PDF
       doc.save(musicName.value + '.pdf')
     },
-    x: 15,
-    y: 15,
-    width: 170, //target width in the PDF document
-    windowWidth: 650, //window width in CSS pixels
+    // x: 15,
+    // y: 15,
+    //width: 595, //target width in the PDF document
+    // windowWidth: 650, //window width in CSS pixels
   })
 
   closeModal()
@@ -345,168 +344,6 @@ function mutateChord(line, position) {
   }
 }
 
-const intervals = ref([
-  { grade: 'I', variation: null },
-  { grade: 'II', variation: 'm' },
-  { grade: 'III', variation: 'm' },
-  { grade: 'IV', variation: null },
-  { grade: 'V', variation: null },
-  { grade: 'VI', variation: 'm' },
-  { grade: 'VII', variation: 'º' },
-])
-
-const dissonants = ref([
-  { grade: 'Ia', variation: null },
-  { grade: 'IIIm', variation: null },
-  { grade: 'IVa', variation: null },
-  { grade: 'Va', variation: null },
-  { grade: 'VIIm', variation: null },
-])
-
-function listaDeAcordes() {
-  let obj
-  switch (tune.value) {
-    case 'G':
-      obj = {
-        I: 'G',
-        II: 'A',
-        III: 'B',
-        IV: 'C',
-        V: 'D',
-        VI: 'E',
-        VII: 'F#',
-        Ia: 'G#',
-        IIIm: 'A#',
-        IVa: 'C#',
-        Va: 'D#',
-        VIIm: 'F',
-      }
-      break
-    case 'A':
-      obj = {
-        I: 'A',
-        II: 'B',
-        III: 'C#',
-        IV: 'D',
-        V: 'E',
-        VI: 'F#',
-        VII: 'G#',
-        Ia: 'A#',
-        IIIm: 'C',
-        IVa: 'D#',
-        Va: 'F',
-        VIIm: 'G',
-      }
-      break
-    case 'B':
-      obj = {
-        I: 'B',
-        II: 'C#',
-        III: 'D#',
-        IV: 'E',
-        V: 'F#',
-        VI: 'G#',
-        VII: 'A#',
-        Ia: 'C',
-        IIIm: 'D',
-        IVa: 'F',
-        Va: 'G',
-        VIIm: 'A',
-      }
-      break
-    case 'C':
-      obj = {
-        I: 'C',
-        II: 'D',
-        III: 'E',
-        IV: 'F',
-        V: 'G',
-        VI: 'A',
-        VII: 'B',
-        Ia: 'C#',
-        IIIm: 'D#',
-        IVa: 'F#',
-        Va: 'G#',
-        VIIm: 'A#',
-      }
-      break
-    case 'D':
-      obj = {
-        I: 'D',
-        II: 'E',
-        III: 'F#',
-        IV: 'G',
-        V: 'A',
-        VI: 'B',
-        VII: 'C#',
-        Ia: 'D#',
-        IIIm: 'F',
-        IVa: 'G#',
-        Va: 'A#',
-        VIIm: 'C',
-      }
-      break
-    case 'E':
-      obj = {
-        I: 'E',
-        II: 'F#',
-        III: 'G#',
-        IV: 'A',
-        V: 'B',
-        VI: 'C#',
-        VII: 'D#',
-        Ia: 'F',
-        IIIm: 'G',
-        IVa: 'A#',
-        Va: 'C',
-        VIIm: 'D',
-      }
-      break
-    case 'F':
-      obj = {
-        I: 'F',
-        II: 'G',
-        III: 'A',
-        IV: 'Bb',
-        V: 'C',
-        VI: 'D',
-        VII: 'E',
-        Ia: 'F#',
-        IIIm: 'G',
-        IVa: 'B',
-        Va: 'C#',
-        VIIm: 'D#',
-      }
-      break
-  }
-  return obj
-}
-
-function tamanhoDaFonte(linha) {
-  let retorno
-  switch (linha.length) {
-    case 1:
-      retorno = 'text-3xl'
-      break
-    case 2:
-      retorno = 'text-3xl'
-      break
-    case 3:
-      retorno = 'text-2xl'
-      break
-    case 4:
-      retorno = 'text-2xl'
-      break
-    case 5:
-      retorno = 'text-lg'
-      break
-    case 6:
-      retorno = 'text-md'
-      break
-  }
-  return retorno
-}
-
 function inserirTexto(index) {
   let text = prompt('Insira aqui o seu texto')
   if (text.length > 2) {
@@ -638,7 +475,7 @@ function inserirTexto(index) {
           @click="addChord(item.grade, item.variation)"
         >
           <span
-            >{{ listaDeAcordes()[item.grade]
+            >{{ listaDeAcordes(tune)[item.grade]
             }}<span>{{ item.variation }}</span></span
           >
         </button>
@@ -652,7 +489,7 @@ function inserirTexto(index) {
           @click="addChord(item.grade, item.variation)"
         >
           <span
-            >{{ listaDeAcordes()[item.grade]
+            >{{ listaDeAcordes(tune)[item.grade]
             }}<span>{{ item.variation }}</span></span
           >
         </button>
@@ -763,6 +600,7 @@ function inserirTexto(index) {
 
   <!--AREA DE EXIBIÇÃO-->
 
+  <!-- eraseArea -->
   <div
     :class="[eraseArea ? 'bg-red-100' : 'bg-zinc-200', hide ? 'h-0' : 'h-16']"
     id="eraseTop"
@@ -770,7 +608,7 @@ function inserirTexto(index) {
     @dragenter.prevent
     @dragleave="eraseArea = false"
     @drop="eraseChordByDrop()"
-    class="fixed top-0 w-full flex justify-center items-center duration-100 overflow-hidden z-10"
+    class="flex fixed top-0 w-full justify-center items-center duration-100 overflow-hidden z-10"
   >
     <img
       src="../assets/trash.png"
@@ -782,131 +620,157 @@ function inserirTexto(index) {
 
   <div class="w-full my-24 lg:my-32"></div>
 
+  <!-- folha -->
+
   <div
-    class="w-[90%] min-h-[90vh] flex flex-col items-center bg-white drop-shadow-lg m-auto pb-48 duration-100"
+    class="-mt-[340px] w-[357px] h-[505px] lg:w-[840px] lg:h-[1188px] flex flex-col items-center bg-white drop-shadow-lg m-auto lg:pb-48 duration-100"
     :class="[hide ? '-mt-16' : 'mt-0']"
   >
-    <input
-      class="text-xl lg:text-3xl my-5 ml-10 border-0 p-0 font-bold drop-shadow-none bg-transparent"
-      :style="'width:' + (musicName.length + 2) + 'ch'"
-      v-model="musicName"
-    />
     <div
-      v-for="(linha, indexLinha) in chord"
-      :key="indexLinha"
-      class="flex items-center font-bold"
-      :class="[
-        zoom ? ' transform scale-[135%]' : 'transform scale-[100%]',
-        tamanhoDaFonte(linha),
-        linha[0] == 'text'
-          ? 'h-10 lg:h-10 lg:text-xl'
-          : 'h-14 lg:h-24 lg:text-4xl',
-      ]"
+      class="w-full h-full flex flex-col items-center scale-[42%] lg:scale-[100%] -mt-[140px] lg:-mt-0"
     >
-      <span
-        v-if="linha[0] != 'text'"
-        @click="inserirTexto(indexLinha)"
-        class="opacity-50 cursor-pointer"
-        >+</span
-      >
-      <div v-if="linha[0] == 'text'" class="text-xl lg:text-3xl">
-        <span @click="chord.splice(indexLinha, 1)">{{ linha[1] }}</span>
-      </div>
-      <div v-else v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
-        <div class="flex items-center duration-100">
-          <span
-            class="w-1 lg:w-4 h-16 duration-100"
-            @dragover.prevent="dragAddBackground"
-            @dragleave="dragRemoveBackground"
-            @dragenter.prevent
-            @drop="addChordBydrop(indexLinha, indexAcorde, $event)"
-          ></span>
-          <span
-            draggable="true"
-            @dragstart="
-              ;(chordToErase = { indexLinha, indexAcorde }),
-                (chordToDrop = acorde)
-            "
-            class="px-1 lg:px-2 rounded cursor-pointer hover:bg-slate-100 select-none hover:border-red-300 duration-100"
-            @dragover.prevent
-            @dragenter.prevent
-            @drop="bassChordBydrop(indexLinha, indexAcorde)"
-            @click="mutateChord(indexLinha, indexAcorde)"
-          >
-            <span v-if="acorde.char == '('">(</span>
-            <span
-              >{{ listaDeAcordes()[acorde.grade]
-              }}<span>{{ acorde.variation }}</span>
-              <span v-if="acorde.bass"
-                >/{{ listaDeAcordes()[acorde.bass] }}</span
-              >
-            </span>
-            <span v-if="acorde.char == ')'">)</span>
-          </span>
-
-          <span
-            class="w-1 lg:w-4 h-16 duration-100"
-            @dragover.prevent="dragAddBackground"
-            @dragleave="dragRemoveBackground"
-            @dragenter.prevent
-            @drop="addChordBydrop(indexLinha, indexAcorde + 1, $event)"
-          ></span>
-        </div>
-      </div>
-      <img
-        v-if="indexLinha + 1 == chord.length"
-        src="../assets/insertion.gif"
-        class="w-1 inline"
-        alt=""
+      <input
+        class="text-[44px] my-10 ml-5 border-0 p-0 font-bold drop-shadow-none bg-transparent"
+        :style="'width:' + (musicName.length + 2) + 'ch'"
+        v-model="musicName"
       />
-    </div>
-  </div>
-
-  <!--AREA DE IMPRESSÃO-->
-  <div class="fixed top-0 -right-[2000px]">
-    <div
-      v-if="pressModel"
-      id="imprimir"
-      class="w-full flex flex-col items-center"
-    >
-      <h1 class="text-3xl mb-5 font-bold">{{ musicName }}</h1>
-
       <div
         v-for="(linha, indexLinha) in chord"
         :key="indexLinha"
-        class="flex items-center font-bold"
+        class="flex items-center font-bold mb-[20px]"
         :class="[
           zoom ? ' transform scale-[135%]' : 'transform scale-[100%]',
-          tamanhoDaFonte(linha),
-          linha[0] == 'text' ? 'h-14 text-2xl' : 'h-24 text-4xl',
+
+          linha[0] == 'text' ? 'h-[60px] ' : 'h-12 text-[32px]',
         ]"
       >
-        <div v-if="linha[0] == 'text'">
+        <span
+          v-if="linha[0] != 'text'"
+          @click="inserirTexto(indexLinha)"
+          class="opacity-50 cursor-pointer"
+          >+</span
+        >
+        <div v-if="linha[0] == 'text'" class="text-[30px]">
           <span @click="chord.splice(indexLinha, 1)">{{ linha[1] }}</span>
         </div>
-        <div v-else v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
-          <div class="flex items-center duration-100">
+        <div
+          v-else
+          v-for="(acorde, indexAcorde) in linha"
+          :key="indexAcorde"
+          class="h-full"
+        >
+          <div class="flex items-center duration-100 h-full">
+            <span
+              class="w-[16px] h-full duration-100"
+              @dragover.prevent="dragAddBackground"
+              @dragleave="dragRemoveBackground"
+              @dragenter.prevent
+              @drop="addChordBydrop(indexLinha, indexAcorde, $event)"
+            ></span>
             <span
               draggable="true"
               @dragstart="
                 ;(chordToErase = { indexLinha, indexAcorde }),
                   (chordToDrop = acorde)
               "
-              class="px-3 rounded cursor-pointer select-none duration-100"
+              class="rounded cursor-pointer p-[4px] hover:bg-slate-100 select-none duration-100"
+              @dragover.prevent
+              @dragenter.prevent
+              @drop="bassChordBydrop(indexLinha, indexAcorde)"
+              @click="mutateChord(indexLinha, indexAcorde)"
+            >
+              <span v-if="acorde.char == '('">(</span>
+              <span
+                >{{ listaDeAcordes(tune)[acorde.grade]
+                }}<span>{{ acorde.variation }}</span>
+                <span v-if="acorde.bass"
+                  >/{{ listaDeAcordes(tune)[acorde.bass] }}</span
+                >
+              </span>
+              <span v-if="acorde.char == ')'">)</span>
+            </span>
+
+            <span
+              class="w-[16px] h-full duration-100"
+              @dragover.prevent="dragAddBackground"
+              @dragleave="dragRemoveBackground"
+              @dragenter.prevent
+              @drop="addChordBydrop(indexLinha, indexAcorde + 1, $event)"
+            ></span>
+          </div>
+        </div>
+        <img
+          v-if="indexLinha + 1 == chord.length"
+          src="../assets/insertion.gif"
+          class="w-1 max-h-[40px] inline"
+          alt=""
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="h-[200px] lg:h-[100px]"></div>
+
+  <!--AREA DE IMPRESSÃO-->
+  <!-- top-0 -right-[2000px]-->
+  <div class="fixed top-60 left-40 scale-[200%] hidden">
+    <div
+      v-if="pressModel"
+      id="imprimir"
+      class="w-[210px] h-[297px] bg-white flex flex-col items-center pb-64"
+    >
+      <h1 class="text-[12px] my-[9px] font-bold">{{ musicName }}</h1>
+
+      <div
+        v-for="(linha, indexLinha) in chord"
+        :key="indexLinha"
+        class="flex items-center font-bold mb-[3px]"
+        :class="[
+          zoom ? ' transform scale-[135%]' : 'transform scale-[100%]',
+
+          linha[0] == 'text' ? 'h-4 ' : 'h-12 text-[8px]',
+        ]"
+      >
+        <div v-if="linha[0] == 'text'" class="text-[8px]">
+          <span @click="chord.splice(indexLinha, 1)">{{ linha[1] }}</span>
+        </div>
+        <div v-else v-for="(acorde, indexAcorde) in linha" :key="indexAcorde">
+          <div class="flex items-center duration-100">
+            <span
+              class="w-[4px] h-full duration-100"
+              @dragover.prevent="dragAddBackground"
+              @dragleave="dragRemoveBackground"
+              @dragenter.prevent
+              @drop="addChordBydrop(indexLinha, indexAcorde, $event)"
+            ></span>
+            <span
+              draggable="true"
+              @dragstart="
+                ;(chordToErase = { indexLinha, indexAcorde }),
+                  (chordToDrop = acorde)
+              "
+              class="rounded cursor-pointer select-none duration-100 p-[1px]"
               @dragover.prevent
               @drop="bassChordBydrop(indexLinha, indexAcorde)"
               @click="mutateChord(indexLinha, indexAcorde)"
             >
               <span v-if="acorde.char == '('">(</span>
               <span
-                >{{ listaDeAcordes()[acorde.grade]
+                >{{ listaDeAcordes(tune)[acorde.grade]
                 }}<span>{{ acorde.variation }}</span>
                 <span v-if="acorde.bass"
-                  >/{{ listaDeAcordes()[acorde.bass] }}</span
+                  >/{{ listaDeAcordes(tune)[acorde.bass] }}</span
                 >
                 <span v-if="acorde.char == ')'">)</span>
               </span>
             </span>
+            <span
+              class="w-[4px] h-full duration-100"
+              @dragover.prevent="dragAddBackground"
+              @dragleave="dragRemoveBackground"
+              @dragenter.prevent
+              @drop="addChordBydrop(indexLinha, indexAcorde + 1, $event)"
+            ></span>
           </div>
         </div>
       </div>
@@ -916,6 +780,6 @@ function inserirTexto(index) {
 
 <style scoped>
 .hover {
-  @apply w-6;
+  @apply w-[25px];
 }
 </style>

@@ -16,7 +16,6 @@ import { useRouter } from 'vue-router'
 import { getAuth } from 'firebase/auth'
 
 polyfill({
-  // use this to make use of the scroll behaviour
   dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
 })
 

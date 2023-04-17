@@ -27,10 +27,86 @@ watch(keyFire, () => {
 })
 
 const tune = ref('C')
-const chord = ref([])
+const chord = ref([
+  [
+    { grade: 'I', variation: '7M9' },
+    { grade: 'VII', variation: 'º' },
+    { grade: 'III', variation: '7' },
+    { grade: 'VI', variation: 'm79' },
+    { grade: 'II', variation: '7' },
+  ],
+  [
+    { grade: 'V', variation: 'm7' },
+    { grade: 'I', variation: '7' },
+  ],
+  [
+    { grade: 'IVa', variation: 'º' },
+    { grade: 'VII', variation: '7' },
+    { grade: 'VIIm', variation: '7M' },
+    { grade: 'VI', variation: '7' },
+  ],
+  [
+    { grade: 'IVa', variation: 'º' },
+    { grade: 'VII', variation: '7' },
+    { grade: 'III', variation: 'm79' },
+    { grade: 'VI', variation: '7' },
+    { grade: 'II', variation: '7' },
+    { grade: 'IV', variation: null, bass: 'V' },
+  ],
+  ['text', 'Será talvez...'],
+  [
+    { grade: 'I', variation: '7M9' },
+    { grade: 'VII', variation: 'º' },
+    { grade: 'III', variation: '7' },
+    { grade: 'VI', variation: 'm79' },
+    { grade: 'II', variation: '7' },
+  ],
+  [
+    { grade: 'V', variation: 'm7' },
+    { grade: 'I', variation: '7' },
+  ],
+  [
+    { grade: 'IVa', variation: 'º' },
+    { grade: 'VII', variation: '7' },
+    { grade: 'VIIm', variation: '7M' },
+    { grade: 'VI', variation: '7' },
+  ],
+  [
+    { grade: 'IVa', variation: null },
+    { grade: 'VII', variation: '7' },
+    { grade: 'III', variation: 'm79' },
+    { grade: 'VI', variation: '7' },
+  ],
+  [
+    { grade: 'VI', variation: 'm' },
+    { grade: 'IV', variation: 'm' },
+    { grade: 'I', variation: '7M' },
+    { grade: 'III', variation: '7' },
+  ],
+  [
+    { grade: 'VI', variation: 'm7' },
+    { grade: 'III', variation: null, bass: 'Va' },
+    { grade: 'V', variation: 'm7' },
+    { grade: 'I', variation: '7' },
+  ],
+  ['text', 'Refrão'],
+  [
+    { grade: 'IV', variation: '7M' },
+    { grade: 'VIIm', variation: '7' },
+    { grade: 'III', variation: 'm7' },
+    { grade: 'VI', variation: '7' },
+  ],
+  [
+    { grade: 'II', variation: '7' },
+    { grade: 'V', variation: '7' },
+    { grade: 'V', variation: 'm7', char: '(' },
+    { grade: 'I', variation: '7', char: ')' },
+    { grade: 'I', variation: '7M' },
+  ],
+])
 const chordToDrop = ref('')
 const chordToErase = ref(null)
-const musicName = ref('Nome da Música')
+const musicName = ref('Flor de Lis')
 const eraseArea = ref(false)
 const pressModel = ref(true)
 const zoom = ref(false)

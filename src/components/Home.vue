@@ -117,6 +117,7 @@ const modal = ref(false)
 const modalTunes = ref(false)
 const showMusicList = ref(false)
 const status = ref(null)
+const cursorPosition = ref([0, 0])
 
 onMounted(() => {
   getChords()
@@ -124,6 +125,13 @@ onMounted(() => {
     if (event.key === 'Escape') {
       //if esc key was not pressed in combination with ctrl or alt or shift
       closeModal()
+    } else if (
+      event.key === 'ArrowUp' ||
+      event.key === 'ArrowDown' ||
+      event.key === 'ArrowLeft' ||
+      event.key === 'ArrowRight'
+    ) {
+      cursorNavigate(event.key)
     }
   })
 })
@@ -157,17 +165,25 @@ function addChord(gradevalue, variationValue) {
     chord.value.push([])
   }
 
-  if (chord.value[chord.value.length - 1].length < 6) {
-    chord.value[chord.value.length - 1].push({
+  if (chord.value[cursorPosition.value[0]].length < 6) {
+    chord.value[cursorPosition.value[0]].splice(cursorPosition.value[1], 0, {
       grade: gradevalue,
       variation: variationValue,
     })
-  } else {
-    chord.value.push([])
-    chord.value[chord.value.length - 1].push({
-      grade: gradevalue,
-      variation: variationValue,
-    })
+    //Ajustar
+    cursorPosition.value[1]++
+  } else if (
+    chord.value[cursorPosition.value[0]].length == 6 &&
+    cursorPosition.value[1] == 6
+  ) {
+    chord.value.splice(cursorPosition.value[0] + 1, 0, [
+      {
+        grade: gradevalue,
+        variation: variationValue,
+      },
+    ]) // Adicionar nova linha no meio do array
+    cursorPosition.value[0]++
+    cursorPosition.value[1] = 1
   }
 }
 
@@ -310,6 +326,7 @@ function addChordBydrop(line, position, e) {
       grade: chordToDrop.value.grade,
       variation: chordToDrop.value.variation,
     })
+    cursorPosition.value[1]++
   } else {
     e.target.classList.remove('hover')
   }
@@ -317,10 +334,41 @@ function addChordBydrop(line, position, e) {
 
 function eraseChordByDrop() {
   if (chordToErase.value) {
-    chord.value[chordToErase.value.indexLinha].splice(
-      chordToErase.value.indexAcorde,
-      1
-    )
+    if (
+      chordToErase.value.indexLinha == cursorPosition.value[0] &&
+      chord.value[chordToErase.value.indexLinha].length > 1 &&
+      cursorPosition.value[1] > chordToErase.value.indexAcorde
+    ) {
+      cursorPosition.value[1]--
+    }
+
+    if (
+      chordToErase.value.indexLinha == cursorPosition.value[0] &&
+      chord.value[chordToErase.value.indexLinha].length == 1 &&
+      chord.value[0].length > 1
+    ) {
+      cursorPosition.value[0]--
+      cursorPosition.value[1] = chord.value[cursorPosition.value[0]].length
+    }
+
+    if (
+      chordToErase.value.indexLinha == cursorPosition.value[0] &&
+      chord.value[chordToErase.value.indexLinha].length == 1 &&
+      cursorPosition.value[0] == 0
+    ) {
+      cursorPosition.value[0] = 0
+      cursorPosition.value[1] = 0
+    }
+
+    if (chord.value[chordToErase.value.indexLinha].length == 1) {
+      chord.value.splice(chordToErase.value.indexLinha, 1)
+    } else {
+      chord.value[chordToErase.value.indexLinha].splice(
+        chordToErase.value.indexAcorde,
+        1
+      )
+    }
+
     eraseArea.value = false
     chordToErase.value = ''
   } else {
@@ -336,6 +384,8 @@ function reset() {
       }
     }
   }
+  cursorPosition.value[0] = 0
+  cursorPosition.value[1] = 0
 }
 
 function newChord() {
@@ -356,11 +406,41 @@ function newChord() {
 }
 
 function backspace() {
-  if (chord.value[chord.value.length - 1].length - 1 > 0) {
-    chord.value[chord.value.length - 1].pop()
-  } else {
-    chord.value.pop()
+  if (chord.value[cursorPosition.value[0]].length > 1) {
+    if (cursorPosition.value[1] == 0) {
+      if (cursorPosition.value[0] != 0) {
+        cursorPosition.value[0]--
+        chord.value[cursorPosition.value[0]].splice(
+          chord.value[cursorPosition.value[0]].length - 1,
+          1
+        )
+        cursorPosition.value[1] = chord.value[cursorPosition.value[0]].length
+      }
+    } else {
+      chord.value[cursorPosition.value[0]].splice(
+        cursorPosition.value[1] - 1,
+        1
+      )
+      cursorPosition.value[1]--
+    }
+  } else if (chord.value[cursorPosition.value[0]].length == 1) {
+    chord.value.splice(cursorPosition.value[0], 1)
+    if (cursorPosition.value[0] == 0) {
+      cursorPosition.value[0] = 0
+      cursorPosition.value[1] = 0
+    } else {
+      cursorPosition.value[0]--
+      cursorPosition.value[1] = chord.value[cursorPosition.value[0]].length
+    }
   }
+
+  //VALIDAR PRIMEIRA LINHA
+
+  // if (chord.value[chord.value.length - 1].length - 1 > 0) {
+  //   chord.value[chord.value.length - 1].pop()
+  // } else {
+  //   chord.value.pop()
+  // }
 }
 
 function mutateChord(line, position) {
@@ -423,6 +503,66 @@ function inserirTexto(index) {
   let text = prompt('Insira aqui o seu texto')
   if (text.length > 2) {
     chord.value.splice(index, 0, ['text', text])
+    cursorPosition.value[0]++
+  }
+}
+
+function changeCursorPointer(linha, acorde) {
+  cursorPosition.value[0] = linha
+  cursorPosition.value[1] = acorde
+}
+
+function cursorNavigate(evt) {
+  switch (evt) {
+    case 'ArrowUp':
+      if (chord.value[cursorPosition.value[0] - 1][0] == 'text') {
+        //Adicionar validação fim da cifra
+        cursorPosition.value[0] = cursorPosition.value[0] - 2
+        cursorPosition.value[1] = 0
+      } else if (cursorPosition.value[0] > 0) {
+        if (
+          chord.value[cursorPosition.value[0] - 1].length <
+          cursorPosition.value[1]
+        ) {
+          cursorPosition.value[1] =
+            chord.value[cursorPosition.value[0] - 1].length
+          cursorPosition.value[0]--
+        } else {
+          cursorPosition.value[0]--
+        }
+      }
+      break
+    case 'ArrowDown':
+      if (chord.value[cursorPosition.value[0] + 1][0] == 'text') {
+        //Adicionar validação fim da cifra
+        cursorPosition.value[0] = cursorPosition.value[0] + 2
+        cursorPosition.value[1] = 0
+      } else if (cursorPosition.value[0] < chord.value.length) {
+        if (
+          chord.value[cursorPosition.value[0] + 1].length <
+          cursorPosition.value[1]
+        ) {
+          cursorPosition.value[1] =
+            chord.value[cursorPosition.value[0] + 1].length
+          cursorPosition.value[0]++
+        } else {
+          cursorPosition.value[0]++
+        }
+      }
+      break
+    case 'ArrowLeft':
+      if (cursorPosition.value[1] > 0) {
+        cursorPosition.value[1]--
+      }
+
+      break
+    case 'ArrowRight':
+      if (
+        cursorPosition.value[1] < chord.value[cursorPosition.value[0]].length
+      ) {
+        cursorPosition.value[1]++
+      }
+      break
   }
 }
 </script>
@@ -709,6 +849,7 @@ function inserirTexto(index) {
         :style="'width:' + (musicName.length + 2) + 'ch'"
         v-model="musicName"
       />
+      {{ cursorPosition }}
       <div
         v-for="(linha, indexLinha) in chord"
         :key="indexLinha"
@@ -736,11 +877,20 @@ function inserirTexto(index) {
         >
           <div class="flex items-center duration-100 h-full">
             <span
+              v-if="
+                cursorPosition[0] == indexLinha &&
+                cursorPosition[1] == indexAcorde
+              "
+            >
+              <div class="cursor w-[2px] h-[40px] bg-black"></div>
+            </span>
+            <span
               class="w-[16px] h-full duration-100"
               @dragover.prevent="dragAddBackground"
               @dragleave="dragRemoveBackground"
               @dragenter.prevent
               @drop="addChordBydrop(indexLinha, indexAcorde, $event)"
+              @click="changeCursorPointer(indexLinha, indexAcorde)"
             ></span>
             <span
               draggable="true"
@@ -771,15 +921,19 @@ function inserirTexto(index) {
               @dragleave="dragRemoveBackground"
               @dragenter.prevent
               @drop="addChordBydrop(indexLinha, indexAcorde + 1, $event)"
+              @click="changeCursorPointer(indexLinha, indexAcorde + 1)"
             ></span>
+            <span
+              v-if="
+                cursorPosition[0] == indexLinha &&
+                cursorPosition[1] == indexAcorde + 1 &&
+                indexAcorde + 1 == chord[indexLinha].length
+              "
+            >
+              <div class="cursor w-[2px] h-[40px] bg-black"></div>
+            </span>
           </div>
         </div>
-        <img
-          v-if="indexLinha + 1 == chord.length"
-          src="../assets/insertion.gif"
-          class="w-1 max-h-[40px] inline"
-          alt=""
-        />
       </div>
     </div>
   </div>
@@ -856,5 +1010,19 @@ function inserirTexto(index) {
 <style scoped>
 .hover {
   @apply w-[25px];
+}
+
+.cursor {
+  animation: blink 0.5s infinite alternate;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0%;
+  }
+
+  100% {
+    opacity: 100%;
+  }
 }
 </style>

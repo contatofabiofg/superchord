@@ -2,11 +2,9 @@
 import { describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import Home from '../components/Home.vue'
-import firebase from '../firebase'
 
 describe('Home', () => {
   let wrapper
-  let wrapper2
 
   test("The font size should adapt according to the string's length.", async () => {
     wrapper = mount(Home)

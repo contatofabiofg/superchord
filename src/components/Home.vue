@@ -565,6 +565,13 @@ function cursorNavigate(evt) {
       break
   }
 }
+
+function addLine() {
+  console.log(cursorPosition.value[0])
+  chord.value.splice(cursorPosition.value[0] + 1, 0, [])
+  cursorPosition.value[0]++
+  cursorPosition.value[1] = 0
+}
 </script>
 
 <template>
@@ -728,9 +735,7 @@ function cursorNavigate(evt) {
         Tune: {{ tune }}
       </button>
 
-      <button class="button" @click="chord.push([])" title="Pular linha">
-        ↲
-      </button>
+      <button class="button" @click="addLine()" title="Pular linha">↲</button>
 
       <button class="button" @click="backspace()" title="Apagar acorde">
         ←
@@ -849,7 +854,7 @@ function cursorNavigate(evt) {
         :style="'width:' + (musicName.length + 2) + 'ch'"
         v-model="musicName"
       />
-      {{ cursorPosition }}
+
       <div
         v-for="(linha, indexLinha) in chord"
         :key="indexLinha"
@@ -868,6 +873,16 @@ function cursorNavigate(evt) {
         >
         <div v-if="linha[0] == 'text'" class="text-[30px]">
           <span @click="chord.splice(indexLinha, 1)">{{ linha[1] }}</span>
+        </div>
+        <div
+          v-if="
+            linha.length == 0 &&
+            cursorPosition[0] == indexLinha &&
+            cursorPosition[1] == 0
+          "
+          class="text-[30px]"
+        >
+          <div class="cursor w-[2px] h-[40px] ml-4 bg-black"></div>
         </div>
         <div
           v-else

@@ -534,6 +534,38 @@ function selecionarTom(tom) {
   tune.value = tom
   sidebar.value = false
 }
+
+function toggleFullScreen() {
+  if (
+    !document.fullscreenElement && // alternative standard method
+    !document.mozFullScreenElement &&
+    !document.webkitFullscreenElement &&
+    !document.msFullscreenElement
+  ) {
+    // current working methods
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen()
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen()
+    } else if (document.documentElement.mozRequestFullScreen) {
+      document.documentElement.mozRequestFullScreen()
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen(
+        Element.ALLOW_KEYBOARD_INPUT
+      )
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen()
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen()
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen()
+    }
+  }
+}
 </script>
 
 <template>
@@ -574,7 +606,7 @@ function selecionarTom(tom) {
   >
     <div
       v-if="!hide"
-      class="flex flex-wrap text-xl lg:justify-center lg:items-center"
+      class="flex flex-wrap text-xl justify-between lg:justify-center lg:items-center"
     >
       <div v-for="(item, index) in intervals" :key="index">
         <button
@@ -626,7 +658,7 @@ function selecionarTom(tom) {
 
       <button class="button" @click="reset()" title="Apagar chord">X</button>
 
-      <button class="button" title="fire">
+      <button class="button" title="fire" @click="toggleFullScreen()">
         <img src="../assets/fire.png" alt="" class="w-[70%] m-auto" />
       </button>
 

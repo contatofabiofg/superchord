@@ -81,7 +81,6 @@ function resetPass() {
 // }
 
 function handleGoogleLogin() {
-  debugger
   signInWithRedirect(auth, providerGoogle)
 }
 </script>

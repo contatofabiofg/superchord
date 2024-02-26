@@ -1,17 +1,12 @@
-<script setup>
-import { ref, onMounted, watch } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { tunes, intervals, dissonants, listaDeAcordes } from '../data/utils.js'
 import { jsPDF } from 'jspdf'
 import { polyfill } from 'mobile-drag-drop'
 import { scrollBehaviourDragImageTranslateOverride } from 'mobile-drag-drop/scroll-behaviour'
-
-import {
-  createChord,
-  getAllChords,
-  updateChord,
-  keyFire,
-  userCol,
-} from '../firebase'
+import Sidebar from 'primevue/sidebar'
+import Menu from './Menu.vue'
+import { createChord, updateChord } from '../firebase'
 import { useRouter } from 'vue-router'
 import { getAuth } from 'firebase/auth'
 
@@ -22,9 +17,7 @@ polyfill({
 const auth = getAuth()
 const router = useRouter()
 
-watch(keyFire, () => {
-  getChords()
-})
+const sidebar = ref(false)
 
 const tune = ref('C')
 const chord = ref([
@@ -112,19 +105,15 @@ const pressModel = ref(true)
 const zoom = ref(false)
 const hide = ref(false)
 const idChord = ref(null)
-const chordList = ref([])
-const modal = ref(false)
 const modalTunes = ref(false)
-const showMusicList = ref(false)
 const status = ref(null)
 const cursorPosition = ref([0, 0])
 
 onMounted(() => {
-  getChords()
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       //if esc key was not pressed in combination with ctrl or alt or shift
-      closeModal()
+      sidebar.value = false
     } else if (
       event.key === 'ArrowUp' ||
       event.key === 'ArrowDown' ||
@@ -135,23 +124,6 @@ onMounted(() => {
     }
   })
 })
-
-async function getChords() {
-  chordList.value = []
-  let response = await getAllChords()
-  if (response) {
-    response.forEach((element) => {
-      let chordJSON = JSON.parse(element.data().chord)
-      let obj = {
-        name: element.data().name,
-        chord: chordJSON,
-        tune: element.data().tune,
-        id: element.data().id,
-      }
-      chordList.value.push(obj)
-    })
-  }
-}
 
 function dragAddBackground(e) {
   e.currentTarget.classList.add('hover')
@@ -204,7 +176,7 @@ function print() {
     // windowWidth: 650, //window width in CSS pixels
   })
 
-  closeModal()
+  sidebar.value = false
 }
 
 function logout() {
@@ -260,39 +232,16 @@ function saveOnline() {
     item.id = idChord.value
     status.value = 'updated'
     updateChord(item).then(() => {
-      closeModal()
+      sidebar.value = false
     })
   } else {
     idChord.value = new Date().getTime().toString()
     status.value = 'created'
     item.id = idChord.value
     createChord(item).then(() => {
-      closeModal()
+      sidebar.value = false
     })
   }
-}
-
-function showModal() {
-  modal.value = true
-  document.querySelector('body').style.overflow = 'hidden'
-}
-
-function showModalTunes() {
-  modalTunes.value = true
-  document.querySelector('body').style.overflow = 'hidden'
-}
-
-function loadMusic(item) {
-  tune.value = item.tune
-  chord.value = item.chord
-  musicName.value = item.name
-  idChord.value = item.id
-}
-
-function closeModal() {
-  modal.value = false
-  showMusicList.value = false
-  document.querySelector('body').style.overflow = 'auto'
 }
 
 function handleFileSelect(event) {
@@ -378,7 +327,7 @@ function eraseChordByDrop() {
 
 function reset() {
   if (chord.value.length > 0) {
-    if (window.confirm('Quer apagar toda esta chord?')) {
+    if (window.confirm('Quer apagar toda esta cifra?')) {
       while (chord.value.length > 0) {
         chord.value[0].forEach(() => chord.value.pop())
       }
@@ -397,7 +346,7 @@ function newChord() {
     ) {
       musicName.value = 'Nome da música'
       idChord.value = null
-      closeModal()
+      sidebar.value = false
       while (chord.value.length > 0) {
         chord.value[0].forEach(() => chord.value.pop())
       }
@@ -572,113 +521,51 @@ function addLine() {
   cursorPosition.value[0]++
   cursorPosition.value[1] = 0
 }
+
+function carregarCifra(cifra) {
+  chord.value = cifra.chord
+  idChord.value = cifra.id
+  musicName.value = cifra.name
+  tune.value = cifra.tune
+  sidebar.value = false
+}
+
+function selecionarTom(tom) {
+  tune.value = tom
+  sidebar.value = false
+}
 </script>
 
 <template>
-  <a @click="logout()">
-    <img
-      src="../assets/logout.png"
-      class="fixed top-3 left-3 w-10 p-2 rounded-full bg-white drop-shadow-lg z-20 cursor-pointer"
-      alt="Sair"
-    />
-  </a>
-
-  <!--MODAL MENU-->
-  <transition
-    appear
-    enter-active-class="duration-300 ease-out"
-    enter-from-class="transform  opacity-0"
-    enter-to-class="opacity-100 "
-    leave-active-class="duration-200 ease-in"
-    leave-from-class="opacity-100"
-    leave-to-class="transform opacity-0"
-  >
-    <div
-      v-if="modal"
-      class="fixed top-0 left-0 right-0 bottom-0 z-20 w-screen h-screen bg-black/50 overflow-hidden flex justify-center items-center"
+  <div class="fixed top-2 left-3 gap-3 z-20 cursor-pointer">
+    <button
+      class="buttonMenu cursor-pointer flex justify-center items-center"
+      @click="sidebar = true"
+      title="Menu"
     >
-      <transition
-        appear
-        enter-active-class="duration-300 ease-out"
-        enter-from-class="transform -translate-x-1/4 opacity-0"
-        enter-to-class="opacity-100 translate-y-0"
-        leave-active-class="duration-200 ease-out"
-        leave-from-class="opacity-100 translate-y-0"
-        leave-to-class="transform -translate-x-1/4 opacity-0"
-      >
-        <div
-          class="relative bg-white p-3 w-[300px] h-fit overflow-hidden drop-shadow-lg rounded-md"
-        >
-          <img src="../assets/superchord.png" class="w-40 m-auto my-2" alt="" />
-          <p class="text-center text-sm">Você está logado como:</p>
-          <p class="text-center text-sm italic mb-4">
-            {{ userCol || 'Convidado - Funcionalidades limitadas' }}
-          </p>
+      <img src="../assets/menu.png" alt="" class="w-7" />
+    </button>
+  </div>
+  <div class="fixed top-2 right-3 flex gap-3 z-20 cursor-pointer">
+    <button
+      class="buttonMenu cursor-pointer flex justify-center items-center"
+      @click="logout()"
+      title="Menu"
+    >
+      <img src="../assets/logout.png" class="w-full" alt="Sair" />
+    </button>
+  </div>
 
-          <div v-if="!showMusicList">
-            <div class="flex">
-              <a class="button2 block m-1" @click="newChord()" title="New Chord"
-                >New</a
-              >
-              <a class="button2 block m-1" @click="saveOnline()" title="Save"
-                >Save</a
-              >
-            </div>
-            <div class="flex">
-              <a
-                class="button2 block m-1"
-                @click="showMusicList = true"
-                title="Save"
-                >Load</a
-              >
-
-              <a class="button2 block m-1" @click="print()" title="Apagar chord"
-                >Print</a
-              >
-            </div>
-            <div class="flex">
-              <a
-                class="button2 block m-1"
-                @click="router.push('/multichords')"
-                title="MultiChords"
-              >
-                MultiChords
-              </a>
-
-              <a
-                class="button2 block m-1"
-                @click=";(hide = true), closeModal()"
-                title="Apagar chord"
-                >Hide</a
-              >
-            </div>
-          </div>
-          <ul v-else class="w-[300px] h-[250px] overflow-y-scroll">
-            <li
-              v-for="(item, index) in chordList"
-              :key="index"
-              @click="loadMusic(item), closeModal()"
-              class="p-2 mb-1 w-[95%] bg-gradient-to-r from-zinc-200 to-white cursor-pointer hover:brightness-110"
-            >
-              {{ item.name }}
-            </li>
-            <img
-              src="../assets/arrow-left.png"
-              class="absolute top-5 left-4 w-6 bg-white rounded-full p-1 cursor-pointer"
-              alt="Back to menu"
-              @click="showMusicList = false"
-            />
-          </ul>
-          <img
-            src="../assets/close.png"
-            class="absolute top-5 right-4 w-6 bg-white rounded-full p-1 cursor-pointer"
-            alt="Back to menu"
-            @click="closeModal()"
-          />
-        </div>
-      </transition>
-    </div>
-  </transition>
+  <Sidebar v-model:visible="sidebar" :showCloseIcon="false" :blockScroll="true">
+    <Menu
+      :tom="tune"
+      @carregar="carregarCifra"
+      @selecionar-tom="selecionarTom"
+      @novoAcorde="newChord"
+      @salvar="saveOnline"
+      @imprimir="print"
+    ></Menu>
+  </Sidebar>
 
   <!--TONE PICKER-->
   <div
@@ -731,10 +618,6 @@ function addLine() {
         <span>)</span>
       </button>
 
-      <button class="buttonbig" @click="showModalTunes()">
-        Tune: {{ tune }}
-      </button>
-
       <button class="button" @click="addLine()" title="Pular linha">↲</button>
 
       <button class="button" @click="backspace()" title="Apagar acorde">
@@ -743,12 +626,8 @@ function addLine() {
 
       <button class="button" @click="reset()" title="Apagar chord">X</button>
 
-      <button class="button" @click="showModal()" title="Menu">
-        <img src="../assets/menu.png" alt="" class="w-7 m-auto" />
-      </button>
-
       <button class="button" title="fire">
-        <img src="../assets/fire.png" alt="" class="w-7 m-auto" />
+        <img src="../assets/fire.png" alt="" class="w-[70%] m-auto" />
       </button>
 
       <form enctype="multipart/form-data">
@@ -837,7 +716,6 @@ function addLine() {
       :class="[eraseArea ? 'opacity-100' : 'opacity-10']"
     />
   </div>
-
   <div class="w-full my-24 lg:my-32"></div>
 
   <!-- folha -->

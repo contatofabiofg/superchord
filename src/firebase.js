@@ -72,6 +72,7 @@ export async function updateChord(item) {
 }
 
 export async function getAllChords() {
+  debugger
   let responseData
   await getUser()
   if (userCol.value) {

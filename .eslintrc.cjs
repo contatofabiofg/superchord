@@ -9,6 +9,7 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest',
+    parser: '@typescript-eslint/parser',
   },
   rules: {
     'vue/attribute-hyphenation': 'off',

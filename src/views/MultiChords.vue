@@ -259,7 +259,7 @@ function listaDeAcordes(tune) {
         v-for="(item, index) in chordList"
         :key="index"
         @click="adicionar(item)"
-        class="p-2 text-white w-[90%] mb-2 cursor-pointer bg-gradient-to-r from-zinc-700 to-zinc-800 hover:brightness-110"
+        class="p-2 text-white w-[90%] mb-2 cursor-pointer rounded-lg border border-zinc-600 bg-gradient-to-r from-zinc-700 to-zinc-800 hover:brightness-125"
       >
         {{ item.name }}
       </li>

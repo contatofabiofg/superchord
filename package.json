@@ -16,12 +16,15 @@
     "jspdf": "^2.5.1",
     "mobile-drag-drop": "^3.0.0-rc.0",
     "prettier": "^2.7.1",
+    "primevue": "^3.49.1",
     "vue": "^3.2.41",
     "vue-router": "^4.1.5",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@testing-library/vue": "^6.6.1",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
     "@vitejs/plugin-vue": "^3.1.2",
     "@vue/test-utils": "^2.2.6",
     "autoprefixer": "^10.4.13",
@@ -30,6 +33,7 @@
     "jsdom": "^20.0.3",
     "postcss": "^8.4.19",
     "tailwindcss": "^3.2.3",
+    "typescript": "^5.3.3",
     "vite": "^3.1.8",
     "vitest": "^0.25.5"
   }

@@ -42,17 +42,16 @@ h2 {
 
 .button {
   @apply
-  border 
-  border-zinc-400 
+  border-2 
+  border-zinc-300 
+  rounded-lg
+  text-zinc-300
   w-[14vw]
   h-12
   lg:w-[50px]
-  lg:m-1
+  m-1
   select-none 
-  bg-gradient-to-r 
-  from-zinc-400 
-  to-zinc-200
-  font-bold
+
   duration-100
   hover:brightness-110
 }
@@ -60,40 +59,40 @@ h2 {
 .buttonbig {
   @apply
   whitespace-nowrap
-  border 
-  border-zinc-400 
+  border-2 
+  border-zinc-300 
+  rounded-lg
   text-[20px]
   h-12
   w-[28vw]
   lg:w-[100px]
   lg:m-1
   select-none 
-  bg-gradient-to-r 
-  from-zinc-400 
-  to-zinc-200
-  font-bold
+text-zinc-300
   duration-100
   hover:brightness-110
 }
 
-.buttonTune {
+.buttonMenu {
 @apply
-w-full
-text-center
+w-9
+h-9
+p-1
+
 border-2
-border-black
+border-zinc-300
+rounded-md
+py-2
 my-1
 font-bold
 transition
-hover:text-white
-hover:bg-black
+hover:border-zinc-100
+
 }
 
 .dissonant {
   @apply
-  bg-gradient-to-r 
-  from-orange-300 
-  to-orange-100
+  border-orange-400 
 }
 
 .button2 {
@@ -101,10 +100,13 @@ hover:bg-black
   w-full 
   p-2 
   text-center 
-  bg-gradient-to-r from-zinc-300 to-zinc-200 
+  border-2
+  border-zinc-300
+  hover:border-orange-400
+  rounded-lg
   font-semibold
   hover:brightness-110 
-  duration-100 
+
   cursor-pointer
 }
 

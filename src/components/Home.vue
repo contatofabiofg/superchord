@@ -601,7 +601,7 @@ function toggleFullScreen() {
 
   <!--TONE PICKER-->
   <div
-    class="z-10 w-full flex-col lg:justify-center lg:py-3 fixed bottom-0 shadow-[0_25px_60px_-15px_rgba(0,0,0,1)] bg-gradient-to-r from-zinc-800 to-zinc-700"
+    class="z-10 w-full flex-col lg:justify-center py-3 lg:py-3 fixed bottom-0 shadow-[0_25px_60px_-15px_rgba(0,0,0,1)] bg-gradient-to-r from-zinc-800 to-zinc-700"
     :class="[hide ? 'h-0' : '']"
   >
     <div
